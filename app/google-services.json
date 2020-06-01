@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "497058820701",
+    "firebase_url": "https://chatapp-5c31f.firebaseio.com",
+    "project_id": "chatapp-5c31f",
+    "storage_bucket": "chatapp-5c31f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497058820701:android:272f16af4c2fc3d4cdd3b4",
+        "android_client_info": {
+          "package_name": "com.basscolor.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "497058820701-iaqbe3sbkv0ju9eb5e2s5eg475baq73f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.basscolor.chatapp",
+            "certificate_hash": "08f01a914ecc0bd5d2a6ee981145358a1a850833"
+          }
+        },
+        {
+          "client_id": "497058820701-7deg7e22hccm4sth5k37eobuon2t9vnh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2cTuWUOqq_uhD3nJHL2KX9z1FLrT9yMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "497058820701-7deg7e22hccm4sth5k37eobuon2t9vnh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
