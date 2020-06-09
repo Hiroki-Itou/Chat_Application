@@ -4,14 +4,17 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.auth.FirebaseAuth
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.view.isInvisible
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
+import kotlinx.android.synthetic.main.activity_login.*
 
 
-class Login_Controller : Login_Activity_Listener{
+class Login_Controller(override val progressView: ConstraintLayout, override val activity: Activity) : Login_Activity_Listener{
 
 
     private val TAG = this.toString()
@@ -21,7 +24,7 @@ class Login_Controller : Login_Activity_Listener{
     private var _firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
 
-    override fun login_Check(activity: Activity) {
+    override fun login_Check() {
 
         if (_firebaseAuth.currentUser != null){
             Log.d(TAG,"ログインしています")
@@ -43,22 +46,46 @@ class Login_Controller : Login_Activity_Listener{
         Log.d(TAG,"Passwordを取得しました= "+this._password!!)
     }
 
-    override fun log_in(activity: Activity) {
+    override fun log_in() {
         if (_email == null || _password == null) return
-
-        _firebaseAuth.createUserWithEmailAndPassword(_email!!, _password!!)
-            .addOnCompleteListener { task: Task<AuthResult> ->
+        progressView.visibility = android.widget.ProgressBar.VISIBLE
+        _firebaseAuth.signInWithEmailAndPassword(_email!!, _password!!)
+            .addOnCompleteListener { task :Task<AuthResult>->
                 if (task.isSuccessful) {
-                    //Registration OK
+                    progressView.visibility = android.widget.ProgressBar.INVISIBLE
                     activity.startActivity(Intent(activity, ChatList_Activity::class.java))
-                   // val firebaseUser = this._firebaseAuth.currentUser!!
+                    Log.d(TAG, "ログインが完了しました")
+
                 } else {
-                    Log.d(TAG, "ログイン中にエラーが発生しました")
+
+                    progressView.visibility = android.widget.ProgressBar.INVISIBLE
+                    Log.d(TAG, "ログイン中にエラーが発生しました", task.exception)
                 }
             }
+
+
+
+
+
+
+//        _firebaseAuth.createUserWithEmailAndPassword(_email!!, _password!!)
+//            .addOnCompleteListener { task: Task<AuthResult> ->
+//                if (task.isSuccessful) {
+//                    //Registration OK
+//                    activity.progressBar.visibility = android.widget.ProgressBar.INVISIBLE
+//                    activity.startActivity(Intent(activity, ChatList_Activity::class.java))
+//
+//                   // val firebaseUser = this._firebaseAuth.currentUser!!
+//                } else {
+//
+//                    Log.d(TAG, "ログイン中にエラーが発生しました")
+//                    activity.progressBar.visibility = android.widget.ProgressBar.INVISIBLE
+//
+//                }
+//            }
     }
 
-    override fun to_user_registration_screen(activity: Activity) {
+    override fun to_user_registration_screen() {
         Log.d(TAG,"ユーザー登録画面へ遷移")
 
         activity.startActivity(Intent(activity, SigninActivity::class.java))

@@ -13,17 +13,21 @@ import androidx.constraintlayout.widget.ConstraintLayout
 
 class LoginActivity : Activity() {
 
-    val _login_Controller = Login_Controller()
+    private lateinit var _login_Controller : Login_Controller
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
 
         val accountCreationButton = findViewById<Button>(R.id.account_creation_button)
         val loginButton = findViewById<Button>(R.id.login_button)
         val emailText = findViewById<EditText>(R.id.mail_edit_text)
         val passwordText = findViewById<EditText>(R.id.password_edit_text)
         val progressView = findViewById<ConstraintLayout>(R.id.progressView)
+        progressView.visibility = android.widget.ProgressBar.INVISIBLE
+
+        _login_Controller = Login_Controller(progressView,this)
 
         emailText.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(p: Editable?) {
@@ -43,14 +47,15 @@ class LoginActivity : Activity() {
 
 
         loginButton.setOnClickListener {
-            _login_Controller.log_in(this)
+           // progressView.visibility = android.widget.ProgressBar.VISIBLE
+            _login_Controller.log_in()
 
-            progressView.visibility = android.widget.ProgressBar.VISIBLE
+
 
         }
 
         accountCreationButton.setOnClickListener {
-            _login_Controller.to_user_registration_screen(this)
+            _login_Controller.to_user_registration_screen()
 
         }
 
@@ -59,7 +64,7 @@ class LoginActivity : Activity() {
     override fun onStart() {
         super.onStart()
 
-        _login_Controller.login_Check(this)
+        _login_Controller.login_Check()
 
     }
 
