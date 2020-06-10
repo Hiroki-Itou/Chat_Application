@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.constraintlayout.widget.ConstraintLayout
 
-interface Login_Activity_Listener {
+interface LoginActivityListener {
 
 
     val progressView : ConstraintLayout

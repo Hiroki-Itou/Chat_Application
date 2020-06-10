@@ -1,19 +1,16 @@
 package com.basscolor.chatapp
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.text.Layout
 import android.text.TextWatcher
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
 
 class LoginActivity : Activity() {
 
-    private lateinit var _login_Controller : Login_Controller
+    private lateinit var _login_Controller : LoginActivityListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +24,7 @@ class LoginActivity : Activity() {
         val progressView = findViewById<ConstraintLayout>(R.id.progressView)
         progressView.visibility = android.widget.ProgressBar.INVISIBLE
 
-        _login_Controller = Login_Controller(progressView,this)
+        _login_Controller = LoginController(progressView,this)
 
         emailText.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(p: Editable?) {

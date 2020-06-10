@@ -1,27 +1,22 @@
 package com.basscolor.chatapp
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.auth.FirebaseAuth
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.view.isInvisible
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
-import kotlinx.android.synthetic.main.activity_login.*
 
 
-class Login_Controller(override val progressView: ConstraintLayout, override val activity: Activity) : Login_Activity_Listener{
+class LoginController(override val progressView: ConstraintLayout, override val activity: Activity) : LoginActivityListener{
 
 
     private val TAG = this.toString()
 
     private var _email : String? = null
     private var _password : String? = null
-    private var _firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val _firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
 
     override fun login_Check() {
@@ -62,27 +57,6 @@ class Login_Controller(override val progressView: ConstraintLayout, override val
                     Log.d(TAG, "ログイン中にエラーが発生しました", task.exception)
                 }
             }
-
-
-
-
-
-
-//        _firebaseAuth.createUserWithEmailAndPassword(_email!!, _password!!)
-//            .addOnCompleteListener { task: Task<AuthResult> ->
-//                if (task.isSuccessful) {
-//                    //Registration OK
-//                    activity.progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-//                    activity.startActivity(Intent(activity, ChatList_Activity::class.java))
-//
-//                   // val firebaseUser = this._firebaseAuth.currentUser!!
-//                } else {
-//
-//                    Log.d(TAG, "ログイン中にエラーが発生しました")
-//                    activity.progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-//
-//                }
-//            }
     }
 
     override fun to_user_registration_screen() {
