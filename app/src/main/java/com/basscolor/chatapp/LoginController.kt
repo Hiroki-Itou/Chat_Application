@@ -3,6 +3,8 @@ package com.basscolor.chatapp
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
+import android.view.Window
+import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.gms.tasks.Task
@@ -43,17 +45,17 @@ class LoginController(override val progressView: ConstraintLayout, override val 
 
     override fun log_in() {
         if (_email == null || _password == null) return
-        progressView.visibility = android.widget.ProgressBar.VISIBLE
+       progress(true)
         _firebaseAuth.signInWithEmailAndPassword(_email!!, _password!!)
             .addOnCompleteListener { task :Task<AuthResult>->
                 if (task.isSuccessful) {
-                    progressView.visibility = android.widget.ProgressBar.INVISIBLE
+                   progress(false)
                     activity.startActivity(Intent(activity, ChatList_Activity::class.java))
                     Log.d(TAG, "ログインが完了しました")
 
                 } else {
 
-                    progressView.visibility = android.widget.ProgressBar.INVISIBLE
+                    progress(false)
                     Log.d(TAG, "ログイン中にエラーが発生しました", task.exception)
                 }
             }
@@ -64,6 +66,17 @@ class LoginController(override val progressView: ConstraintLayout, override val 
 
         activity.startActivity(Intent(activity, SigninActivity::class.java))
 
+    }
+
+    private fun progress(switch:Boolean){
+
+        if(switch){
+            activity.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            progressView.visibility = android.widget.ProgressBar.VISIBLE
+        }else{
+            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            progressView.visibility = android.widget.ProgressBar.INVISIBLE
+        }
     }
 
 

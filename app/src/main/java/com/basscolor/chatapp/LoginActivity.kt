@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -15,7 +16,6 @@ class LoginActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
 
         val accountCreationButton = findViewById<Button>(R.id.account_creation_button)
         val loginButton = findViewById<Button>(R.id.login_button)
@@ -42,27 +42,19 @@ class LoginActivity : Activity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
 
-
         loginButton.setOnClickListener {
-           // progressView.visibility = android.widget.ProgressBar.VISIBLE
+            window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             _login_Controller.log_in()
-
-
-
         }
 
         accountCreationButton.setOnClickListener {
             _login_Controller.to_user_registration_screen()
-
         }
-
     }
 
     override fun onStart() {
         super.onStart()
-
         _login_Controller.login_Check()
-
     }
 
 

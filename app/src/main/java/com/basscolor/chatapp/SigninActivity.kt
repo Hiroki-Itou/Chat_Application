@@ -18,7 +18,6 @@ class SigninActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signin)
 
-
         val signinButton = findViewById<Button>(R.id.signin_button)
         val nameText = findViewById<EditText>(R.id.username_editText)
         val emailText = findViewById<EditText>(R.id.mail_edittext)
