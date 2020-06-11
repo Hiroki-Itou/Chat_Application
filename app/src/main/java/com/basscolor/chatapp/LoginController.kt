@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.gms.tasks.Task
@@ -50,12 +51,17 @@ class LoginController(override val progressView: ConstraintLayout, override val 
             .addOnCompleteListener { task :Task<AuthResult>->
                 if (task.isSuccessful) {
                    progress(false)
-                    activity.startActivity(Intent(activity, ChatList_Activity::class.java))
+
+                    val intent = Intent(activity, ChatList_Activity::class.java)
+
+                    activity.startActivity(intent)
                     Log.d(TAG, "ログインが完了しました")
 
                 } else {
 
                     progress(false)
+                    Toast.makeText(activity, "ログインに失敗しました。",
+                        Toast.LENGTH_LONG).show()
                     Log.d(TAG, "ログイン中にエラーが発生しました", task.exception)
                 }
             }
