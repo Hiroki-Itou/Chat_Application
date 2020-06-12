@@ -26,7 +26,7 @@ class SigninActivity : Activity() {
         val progressView = findViewById<ConstraintLayout>(R.id.progressView)
         progressView.visibility = android.widget.ProgressBar.INVISIBLE
 
-        signinController = SigninController(progressView,this)
+        signinController = SigninController(this)
 
         signinButton.setOnClickListener {
             signinController.sign_in()

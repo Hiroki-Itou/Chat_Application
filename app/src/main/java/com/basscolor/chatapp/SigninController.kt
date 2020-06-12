@@ -3,14 +3,16 @@ package com.basscolor.chatapp
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.firebase.auth.AuthResult
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_login.*
 
-class SigninController(override val progressView: ConstraintLayout, override val activity: Activity) :SigninActivityListener{
+class SigninController( override val activity: Activity) :SigninActivityListener{
 
     private val _firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val _firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -94,10 +96,12 @@ class SigninController(override val progressView: ConstraintLayout, override val
 
         if(switch){
             activity.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            progressView.visibility = android.widget.ProgressBar.VISIBLE
+            //progressView.visibility = android.widget.ProgressBar.VISIBLE
+            activity.progressView.visibility = View.VISIBLE
         }else{
             activity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            progressView.visibility = android.widget.ProgressBar.INVISIBLE
+            //progressView.visibility = android.widget.ProgressBar.INVISIBLE
+            activity.progressView.visibility = View.INVISIBLE
         }
     }
 

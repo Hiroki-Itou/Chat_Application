@@ -4,7 +4,7 @@ class User(dec:Map<String, Any>) {
 
     private var email : String? = null
     private var name : String? = null
-    private var lastMessage : String? = null
+    private var uid : String? = null
 
     init {
 
@@ -16,9 +16,9 @@ class User(dec:Map<String, Any>) {
             if (name == null) {
             this.name = "anknown"
         }
-        this.lastMessage = dec["last_message"] as String?
-        if (lastMessage == null) {
-            this.lastMessage = ""
+        this.uid = dec["uid"] as String?
+        if (uid == null) {
+            this.uid = "no_ID"
         }
     }
 
@@ -28,8 +28,8 @@ class User(dec:Map<String, Any>) {
     fun get_name():String{
       return name!!
     }
-    fun get_lastMessage():String{
-      return lastMessage!!
+    fun get_uid():String{
+      return uid!!
     }
 
 }

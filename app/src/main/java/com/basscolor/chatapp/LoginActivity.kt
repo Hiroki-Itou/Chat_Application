@@ -24,7 +24,7 @@ class LoginActivity : Activity() {
         val progressView = findViewById<ConstraintLayout>(R.id.progressView)
         progressView.visibility = android.widget.ProgressBar.INVISIBLE
 
-        _login_Controller = LoginController(progressView,this)
+        _login_Controller = LoginController(this)
 
         emailText.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(p: Editable?) {

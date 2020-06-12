@@ -26,8 +26,8 @@ class ChatListController(override val activity: Activity, override var listView:
                 users.add(user)
             }
             users.forEach Loop@{user ->
-                Log.d(TAG, user.get_name()+"/"+user.get_email() +"/"+user.get_lastMessage())
-                val room = mutableMapOf("imageView" to R.drawable.icon,"name" to user.get_name(), "last_message" to user.get_lastMessage())
+                Log.d(TAG, user.get_name()+"/"+user.get_email() +"/"+user.get_uid())
+                val room = mutableMapOf("imageView" to R.drawable.icon,"name" to user.get_name(), "last_message" to "こんにちは")
                 room_list.add(room)
             }
 
