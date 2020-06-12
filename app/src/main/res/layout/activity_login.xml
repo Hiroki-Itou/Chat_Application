@@ -59,8 +59,8 @@
 
     <Button
         android:id="@+id/login_button"
-        android:layout_width="107dp"
-        android:layout_height="37dp"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
         android:background="#009588"
         android:text="ログイン"
         android:textColor="#ffff"
@@ -103,8 +103,8 @@
 
     <Button
         android:id="@+id/account_creation_button"
-        android:layout_width="203dp"
-        android:layout_height="43dp"
+        android:layout_width="200dp"
+        android:layout_height="45dp"
         android:layout_marginTop="70dp"
         android:text="新しいアカウントを作成"
         app:layout_constraintEnd_toEndOf="parent"

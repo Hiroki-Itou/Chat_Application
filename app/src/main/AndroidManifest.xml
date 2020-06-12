@@ -18,10 +18,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".SigninActivity" >
-
         </activity>
         <activity android:name=".ChatList_Activity" >
-
+        </activity>
+        <activity android:name=".FriendSearchActivity" >
         </activity>
 
     </application>
