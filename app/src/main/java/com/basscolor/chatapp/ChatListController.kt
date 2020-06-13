@@ -13,36 +13,31 @@ class ChatListController(override val activity: Activity, override var listView:
 
 
     private val TAG = this.toString()
-    val users = ArrayList<User>()
+
     private val _firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val _firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val room_list: MutableList<MutableMap<String,Any>> = mutableListOf()
+
 
     override fun load_ChatList() {
 
-        _firestore.collection("users").get().addOnSuccessListener{ result ->
+        _firestore.collection("users").document(_firebaseAuth.uid.toString()).collection("chatrooms").get().addOnSuccessListener{ result ->
+            val users = ArrayList<User>()
+            val roomList: MutableList<MutableMap<String,Any>> = mutableListOf()
+
             for (doc in result) {
                 val user = User(doc.data)
-                users.add(user)
+                 users.add(user)
             }
             users.forEach Loop@{user ->
                 Log.d(TAG, user.get_name()+"/"+user.get_email() +"/"+user.get_uid())
-                val room = mutableMapOf("imageView" to R.drawable.icon,"name" to user.get_name(), "last_message" to "こんにちは")
-                room_list.add(room)
+                val room = mutableMapOf("imageView" to R.drawable.icon,"name" to user.get_name(), "last_message" to "チャットルームが作成されました")
+
+                roomList.add(room)
             }
 
-//            val images = arrayOf(R.drawable.setuna,R.drawable.haruka,R.drawable.aoi,R.drawable.wakana)
-//            var count = 0
-//            users.forEach Loop@{user ->
-//
-//                Log.d(TAG, user.get_name()+"/"+user.get_email() +"/"+user.get_lastMessage())
-//                val room = mutableMapOf("imageView" to images[count],"name" to user.get_name(), "last_message" to user.get_lastMessage())
-//                room_list.add(room)
-//                count ++
-//            }
             val from = arrayOf("imageView","name", "last_message")
             val to = intArrayOf(R.id.imageView,R.id.friend_name, R.id.last_message)
-            val adapter = SimpleAdapter(activity,room_list,R.layout.list_items,from,to)
+            val adapter = SimpleAdapter(activity,roomList,R.layout.list_items,from,to)
             listView.adapter = adapter
 
         }.addOnFailureListener{e ->
@@ -68,4 +63,10 @@ class ChatListController(override val activity: Activity, override var listView:
         _firebaseAuth.signOut()
         activity.finish()
     }
+
+    override fun reload() {
+
+        load_ChatList()
+    }
+
 }

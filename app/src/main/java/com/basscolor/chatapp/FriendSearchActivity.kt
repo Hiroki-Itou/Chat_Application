@@ -3,6 +3,7 @@ package com.basscolor.chatapp
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.SearchView
 
 class FriendSearchActivity : Activity() {
@@ -14,6 +15,11 @@ class FriendSearchActivity : Activity() {
         setContentView(R.layout.activity_friend_search)
 
         friendSearchController = FriendSearchController(this)
+
+        val addFriendButton = findViewById<Button>(R.id.Add_Friend)
+        addFriendButton.setOnClickListener {
+            friendSearchController.addRoom()
+        }
 
         val searchView = findViewById<SearchView>(R.id.searchView)
         searchView.setOnQueryTextListener(object:SearchView.OnQueryTextListener{

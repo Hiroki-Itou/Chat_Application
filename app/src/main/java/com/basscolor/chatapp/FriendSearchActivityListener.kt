@@ -6,5 +6,6 @@ interface FriendSearchActivityListener {
 
     val activity : Activity
     fun search(userName:String)
+    fun addRoom()
 
 }

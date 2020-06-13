@@ -32,4 +32,10 @@ class ChatList_Activity : Activity() {
     }
 
 
+    override fun onRestart() {
+        super.onRestart()
+
+        chatListController.reload()
+    }
+
 }

@@ -13,6 +13,7 @@ interface ChatListActivityListener {
     fun add_Chatlist()
     fun select_ChatList()
     fun logOut()
+    fun reload()
 
 
 }
