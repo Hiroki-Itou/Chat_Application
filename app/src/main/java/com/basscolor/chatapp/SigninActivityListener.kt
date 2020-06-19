@@ -4,8 +4,6 @@ import android.app.Activity
 
 interface SigninActivityListener {
 
-
-
     val activity : Activity
     fun get_userName(name:String)
     fun get_mailAddress(email:String)

@@ -1,6 +1,7 @@
 package com.basscolor.chatapp
 
 import android.app.Activity
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
 import android.view.View
@@ -11,13 +12,11 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_login.*
+import java.lang.Exception
 
 class SigninController( override val activity: Activity) :SigninActivityListener{
 
-    private val _firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val _firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val TAG = this.toString()
-
+    private  val authentication = Authentication()
     private var _userName : String? = null
     private var _email : String? = null
     private var _password : String? = null
@@ -52,18 +51,18 @@ class SigninController( override val activity: Activity) :SigninActivityListener
         if (_email == null || _password == null) return
         if(!password_Check())return
         progress(true)
-        _firebaseAuth.createUserWithEmailAndPassword(_email!!, _password!!)
-            .addOnCompleteListener { task: Task<AuthResult> ->
-                if (task.isSuccessful) {
-                    Log.d(TAG,"サインインが完了しました")
-                    registration( this._firebaseAuth.currentUser!!.uid)
-                } else {
 
-                    progress(false)
-                    Log.d(TAG, "サインイン中にエラーが発生しました", task.exception)
-
-                }
+        authentication.signin(_email!!,_password!!,object : Authentication.Signin_Delegate {
+            override fun success() {
+                Log.d(TAG,"認証登録が完了しました")
+                registration( authentication.get_currentUid()!!)
             }
+
+            override fun error(exception: Exception?) {
+                progress(false)
+                Log.d(TAG, "認証登録中にエラーが発生しました",exception)
+            }
+        })
     }
 
     private fun registration(uid:String){
@@ -74,18 +73,23 @@ class SigninController( override val activity: Activity) :SigninActivityListener
             "uid" to uid
         )
 
-        _firestore.collection("users")
-            .document(uid)
-            .set(user)
-            .addOnSuccessListener {
-                Log.d(TAG," 登録が完了しました")
+        val dataBase = DataBase()
+        dataBase.registration(user,object : DataBase.Registration_Delegate {
+            override fun success() {
+                Log.d(TAG,"ユーザー登録が完了しました")
+
+                CurrentUser.cureateUserData(_userName!!,_email!!,uid)
+
                 progress(false)
                 activity.startActivity(Intent(activity, ChatList_Activity::class.java))
             }
-            .addOnFailureListener { e ->
+
+            override fun error(exception: Exception) {
                 progress(false)
-                Log.w(TAG, " 登録中にエラーが発生しました ", e)
+                Log.w(TAG, "ユーザー登録中にエラーが発生しました ", exception)
             }
+
+        })
     }
 
     private fun password_Check():Boolean{
@@ -96,11 +100,9 @@ class SigninController( override val activity: Activity) :SigninActivityListener
 
         if(switch){
             activity.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            //progressView.visibility = android.widget.ProgressBar.VISIBLE
             activity.progressView.visibility = View.VISIBLE
         }else{
             activity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            //progressView.visibility = android.widget.ProgressBar.INVISIBLE
             activity.progressView.visibility = View.INVISIBLE
         }
     }
