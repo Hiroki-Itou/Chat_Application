@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
+import android.view.View
 import android.widget.ListView
 import android.widget.SimpleAdapter
 import com.google.firebase.auth.FirebaseAuth
@@ -25,16 +26,22 @@ class ChatListController(override val activity: Activity, override var listView:
 
                 val roomList: MutableList<MutableMap<String,Any>> = mutableListOf()
 
+                val testClass = TestClass()
+                testClass.name = "テストの名前"
+
                 containers.forEach Loop@{user ->
                     Log.d(TAG, user.get_name()+"/"+user.get_email() +"/"+user.get_uid())
-                    val room = mutableMapOf("imageView" to R.drawable.icon,"name" to user.get_name(), "last_message" to "チャットルームが作成されました")
+                    val room = mutableMapOf("imageView" to R.drawable.icon,"name" to user.get_name(), "last_message" to "チャットルームが作成されました" , "testClass" to testClass)
 
                     roomList.add(room)
+
                 }
 
                 val from = arrayOf("imageView","name", "last_message")
                 val to = intArrayOf(R.id.imageView,R.id.friend_name, R.id.last_message)
                 val adapter = SimpleAdapter(activity,roomList,R.layout.list_items,from,to)
+
+
                 listView.adapter = adapter
             }
             override fun error(exception: Exception) {
@@ -51,8 +58,15 @@ class ChatListController(override val activity: Activity, override var listView:
 
     }
 
-    override fun select_ChatList() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun select_ChatList(mutableMap:MutableMap<String,Any>) {
+
+
+        val test = mutableMap["testClass"] as TestClass
+        test.testMesod()
+
+        Log.d(TAG,"チャットをクリックしました"+mutableMap["name"])
+
+
     }
 
     override fun logOut() {
@@ -65,5 +79,16 @@ class ChatListController(override val activity: Activity, override var listView:
 
         load_ChatList()
     }
+
+
+    class TestClass(){
+
+        var name = "testName"
+
+        fun testMesod(){
+            Log.d("Test","テストmessageを表示"+name)
+        }
+    }
+
 
 }

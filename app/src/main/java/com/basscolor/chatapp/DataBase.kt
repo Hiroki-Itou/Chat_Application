@@ -10,28 +10,28 @@ class DataBase{
     private val firestore = FirebaseFirestore.getInstance()
 
 
-    fun registration(registData:Map<String,String?>,registration_Delegate:Registration_Delegate){
-
-        firestore.collection("users")
-            .document(registData["uid"]as String)
-            .set(registData)
-            .addOnSuccessListener {
-                registration_Delegate.success()
-            }
-            .addOnFailureListener { e ->
-                registration_Delegate.error(e)
-            }
-    }
-
-    fun get_currentUserDatabase(uid:String,get_currentUserDatabase_Delegate:Get_currentUserDatabase_Delegate){
-
-        firestore.collection("users").document(uid).get().addOnSuccessListener { result ->
-            val currentUser = UserContainer(result.data!!)
-            get_currentUserDatabase_Delegate.success(currentUser)
-        }.addOnFailureListener { e->
-            get_currentUserDatabase_Delegate.error(e)
-        }
-    }
+//    fun registration(registData:Map<String,String?>,registration_Delegate:Registration_Delegate){
+//
+//        firestore.collection("users")
+//            .document(registData["uid"]as String)
+//            .set(registData)
+//            .addOnSuccessListener {
+//                registration_Delegate.success()
+//            }
+//            .addOnFailureListener { e ->
+//                registration_Delegate.error(e)
+//            }
+//    }
+//
+//    fun get_currentUserDatabase(uid:String,get_currentUserDatabase_Delegate:Get_currentUserDatabase_Delegate){
+//
+//        firestore.collection("users").document(uid).get().addOnSuccessListener { result ->
+//            val currentUser = UserContainer(result.data!!)
+//            get_currentUserDatabase_Delegate.success(currentUser)
+//        }.addOnFailureListener { e->
+//            get_currentUserDatabase_Delegate.error(e)
+//        }
+//    }
 
 
     fun search_User(searchName:String,search_User_Delegate:Search_User_Delegate){
@@ -53,11 +53,11 @@ class DataBase{
             Log.d(ContentValues.TAG,"検索に失敗しました ",e)
         }
     }
-    interface Get_currentUserDatabase_Delegate{
-
-        fun success(user:UserContainer)
-        fun error(exception: Exception)
-    }
+//    interface Get_currentUserDatabase_Delegate{
+//
+//        fun success(user:UserContainer)
+//        fun error(exception: Exception)
+//    }
 
     interface Search_User_Delegate{
 
@@ -66,9 +66,9 @@ class DataBase{
         fun error(exception: Exception)
     }
 
-    interface Registration_Delegate{
-        fun success()
-        fun error(exception: Exception)
-    }
+//    interface Registration_Delegate{
+//        fun success()
+//        fun error(exception: Exception)
+//    }
 
 }

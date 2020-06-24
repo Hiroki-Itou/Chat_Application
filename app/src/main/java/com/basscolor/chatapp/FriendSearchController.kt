@@ -4,6 +4,7 @@ import android.app.Activity
 import android.util.Log
 import android.view.View
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.WriteBatch
 import kotlinx.android.synthetic.main.activity_friend_search.*
 import java.lang.Exception
 
@@ -57,6 +58,7 @@ class FriendSearchController(override val activity: Activity) :FriendSearchActiv
             .document(currentUser.uid)
             .collection("chatrooms")
             .document(_searchUser!!.get_uid())
+
 
         val searchUserRoom = _firestore.collection("users")
             .document(_searchUser!!.get_uid())

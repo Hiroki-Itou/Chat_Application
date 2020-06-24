@@ -11,7 +11,7 @@ interface ChatListActivityListener {
 
     fun load_ChatList()
     fun add_Chatlist()
-    fun select_ChatList()
+    fun select_ChatList(mutableMap:MutableMap<String,Any>)
     fun logOut()
     fun reload()
 

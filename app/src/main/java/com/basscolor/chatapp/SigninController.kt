@@ -14,13 +14,21 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_login.*
 import java.lang.Exception
 
-class SigninController( override val activity: Activity) :SigninActivityListener{
+class SigninController( override val activity: Activity) :SigninActivityListener,Mediator{
 
     private  val authentication = Authentication()
     private var _userName : String? = null
     private var _email : String? = null
     private var _password : String? = null
     private var _confirmationPass : String? = null
+    private lateinit var uid :String
+    private val signin = Signin()
+    private val registrationManagement = RegistrationManagement()
+
+    init {
+        cureateColleagues()
+    }
+
 
     override fun get_userName(name: String) {
         this._userName = name
@@ -52,30 +60,42 @@ class SigninController( override val activity: Activity) :SigninActivityListener
         if(!password_Check())return
         progress(true)
 
-        authentication.signin(_email!!,_password!!,object : Authentication.Signin_Delegate {
-            override fun success() {
-                Log.d(TAG,"認証登録が完了しました")
-                registration( authentication.get_currentUid()!!)
-            }
+        signin.SigninToChat(_email!!,_password!!)
 
-            override fun error(exception: Exception?) {
-                progress(false)
-                Log.d(TAG, "認証登録中にエラーが発生しました",exception)
-            }
-        })
+//        authentication.signin(_email!!,_password!!,object : Authentication.Signin_Delegate {
+//            override fun success() {
+//                Log.d(TAG,"認証登録が完了しました")
+//                registration( authentication.get_currentUid()!!)
+//            }
+//
+//            override fun error(exception: Exception?) {
+//                progress(false)
+//                Log.d(TAG, "認証登録中にエラーが発生しました",exception)
+//            }
+//        })
     }
 
-    private fun registration(uid:String){
+    override fun cureateColleagues() {
+        signin.setMediator(this)
+        registrationManagement.setMediator(this)
 
-        val user = hashMapOf(
-            "name" to _userName,
-            "email" to _email,
-            "uid" to uid
-        )
+    }
 
-        val dataBase = DataBase()
-        dataBase.registration(user,object : DataBase.Registration_Delegate {
-            override fun success() {
+    override fun colleagueSuccess(colleague: Colleague) {
+
+        when (colleague) {
+            signin -> {
+
+                this.uid =  authentication.get_currentUid()!!
+                val registData = hashMapOf(
+                    "name" to _userName,
+                    "email" to _email,
+                    "uid" to uid
+                )
+
+                registrationManagement.registration(registData)
+            }
+            registrationManagement ->{
                 Log.d(TAG,"ユーザー登録が完了しました")
 
                 CurrentUser.cureateUserData(_userName!!,_email!!,uid)
@@ -83,14 +103,44 @@ class SigninController( override val activity: Activity) :SigninActivityListener
                 progress(false)
                 activity.startActivity(Intent(activity, ChatList_Activity::class.java))
             }
-
-            override fun error(exception: Exception) {
-                progress(false)
-                Log.w(TAG, "ユーザー登録中にエラーが発生しました ", exception)
-            }
-
-        })
+            else -> Log.d(TAG, "")
+        }
     }
+    override fun colleagueFailure(colleague: Colleague) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun colleagueError(colleague: Colleague) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+
+//    private fun registration(uid:String){
+//
+//        val user = hashMapOf(
+//            "name" to _userName,
+//            "email" to _email,
+//            "uid" to uid
+//        )
+//
+//        val dataBase = DataBase()
+//        dataBase.registration(user,object : DataBase.Registration_Delegate {
+//            override fun success() {
+//                Log.d(TAG,"ユーザー登録が完了しました")
+//
+//                CurrentUser.cureateUserData(_userName!!,_email!!,uid)
+//
+//                progress(false)
+//                activity.startActivity(Intent(activity, ChatList_Activity::class.java))
+//            }
+//
+//            override fun error(exception: Exception) {
+//                progress(false)
+//                Log.w(TAG, "ユーザー登録中にエラーが発生しました ", exception)
+//            }
+//
+//        })
+//    }
 
     private fun password_Check():Boolean{
         return _password == _confirmationPass

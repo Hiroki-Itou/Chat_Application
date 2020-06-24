@@ -1,12 +1,12 @@
 package com.basscolor.chatapp
 
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import java.lang.Exception
+import com.google.firebase.auth.FirebaseUser
 
-class Authentication {
+class Authentication : Colleague {
 
+
+    private lateinit var mediator: Mediator
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
 
@@ -22,42 +22,65 @@ class Authentication {
         return firebaseAuth.currentUser != null
     }
 
-    fun signin(email:String,password: String,signinDelegate: Signin_Delegate){
-
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task: Task<AuthResult> ->
-                if (task.isSuccessful) {
-                    signinDelegate.success()
-                } else {
-                    signinDelegate.error(task.exception)
-                }
-            }
-    }
-
-    fun login(email:String,password:String,loginDelegate: Login_Delegate){
-
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task :Task<AuthResult>->
-                if (task.isSuccessful) {
-                    loginDelegate.success()
-                } else {
-                    loginDelegate.error(task.exception)
-                }
-            }
+    fun re_isLogin():FirebaseUser? {
+        return firebaseAuth.currentUser
     }
 
 
-    interface Signin_Delegate{
+//    fun signin(email:String,password: String,signinDelegate: Signin_Delegate){
+//
+//        firebaseAuth.createUserWithEmailAndPassword(email, password)
+//            .addOnCompleteListener { task: Task<AuthResult> ->
+//                if (task.isSuccessful) {
+//                    signinDelegate.success()
+//                } else {
+//                    signinDelegate.error(task.exception)
+//                }
+//            }
+//    }
 
-        fun success()
+//    fun login(email:String,password:String){
+//
+//        firebaseAuth.signInWithEmailAndPassword(email, password)
+//            .addOnCompleteListener { task :Task<AuthResult>->
+//                if (task.isSuccessful) {
+//                    setcolleagueSuccess()
+//                } else {
+//                    setcolleagueError()
+//                    Log.e(TAG,"ログイン中にエラーが発生しました"+task.exception)
+//                }
+//            }
+//    }
 
-        fun error(exception: Exception?)
+    override fun setMediator(mediator: Mediator) {
+        this.mediator = mediator
     }
-    interface Login_Delegate{
 
-        fun success()
-
-        fun error(exception: Exception?)
+    override fun setColleagueSuccess(): Colleague {
+        return this
     }
+
+    override fun setColleagueFailure(): Colleague {
+        return this
+    }
+
+    override fun setColleagueError(): Colleague {
+        return this
+    }
+
+
+//
+//    interface Signin_Delegate{
+//
+//        fun success()
+//
+//        fun error(exception: Exception?)
+//    }
+//    interface Login_Delegate{
+//
+//        fun success()
+//
+//        fun error(exception: Exception?)
+//    }
 
 }
