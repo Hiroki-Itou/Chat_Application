@@ -20,7 +20,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/friend_name"
+            android:id="@+id/roomName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="1dp"
@@ -30,7 +30,7 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/last_message"
+            android:id="@+id/doorMessagePlate"
             android:layout_width="230dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"

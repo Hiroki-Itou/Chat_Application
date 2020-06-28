@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 
 class Signin :Colleague{
 
@@ -28,16 +29,29 @@ class Signin :Colleague{
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    fun SigninToChat(email:String,password: String){
+    fun SigninToChat(email:String,password: String,userName:String){
 
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task: Task<AuthResult> ->
                 if (task.isSuccessful) {
-                    mediator.colleagueSuccess(this)
+                    setProfile(userName)
                 } else {
                     Log.d(TAG,"サインイン中にエラーが発生しました"+task.exception)
                     mediator.colleagueError(this)
                 }
             }
+    }
+
+    private fun setProfile(userName:String){
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val request = UserProfileChangeRequest.Builder()
+            .setDisplayName(userName)
+            .build()
+        currentUser!!.updateProfile(request).addOnSuccessListener {
+            mediator.colleagueSuccess(this)
+        }.addOnFailureListener { e->
+            mediator.colleagueError(this)
+            Log.e(TAG, "プロフィールセット中にエラーが発生しました ", e)
+        }
     }
 }

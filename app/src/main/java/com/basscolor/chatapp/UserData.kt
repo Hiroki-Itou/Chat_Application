@@ -1,3 +1,27 @@
 package com.basscolor.chatapp
 
-data class UserData(val name:String,val email:String,val uid:String)
+class UserData(val dec:Map<String, Any>) {
+
+    fun getEmail():String{
+        var email =  dec["email"] as String?
+        if (email == null) {
+            email = "no_email"
+        }
+        return email
+    }
+    fun getName():String{
+        var name = dec["name"] as String?
+        if (name == null) {
+            name = "anknown"
+        }
+        return name
+    }
+    fun getUserID():String{
+        var uid = dec["userID"] as String?
+        if (uid == null) {
+            uid = "no_ID"
+        }
+          return uid
+    }
+
+}

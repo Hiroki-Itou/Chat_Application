@@ -2,7 +2,7 @@ package com.basscolor.chatapp
 
 import android.app.Activity
 
-interface FriendSearchActivityListener {
+interface UserSearchActivityListener {
 
     val activity : Activity
     fun search(userName:String)

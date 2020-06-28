@@ -2,19 +2,18 @@ package com.basscolor.chatapp
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.SearchView
 
-class FriendSearchActivity : Activity() {
+class UserSearchActivity : Activity() {
 
-    private lateinit var friendSearchController :FriendSearchActivityListener
+    private lateinit var friendSearchController :UserSearchActivityListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_search)
 
-        friendSearchController = FriendSearchController(this)
+        friendSearchController = UserSearchActivityController(this)
 
         val addFriendButton = findViewById<Button>(R.id.Add_Friend)
         addFriendButton.setOnClickListener {

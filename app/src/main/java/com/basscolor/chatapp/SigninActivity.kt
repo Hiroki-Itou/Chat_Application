@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
-import kotlinx.android.synthetic.main.activity_signin.*
 
 class SigninActivity : Activity() {
 
@@ -26,35 +25,35 @@ class SigninActivity : Activity() {
         val progressView = findViewById<ConstraintLayout>(R.id.progressView)
         progressView.visibility = android.widget.ProgressBar.INVISIBLE
 
-        signinController = SigninController(this)
+        signinController = SigninActivityController(this)
 
         signinButton.setOnClickListener {
-            signinController.sign_in()
+            signinController.onSignIn()
         }
         nameText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p: Editable?) {
-                signinController.get_userName(p.toString())
+                signinController.onInputUserName(p.toString())
             }
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
         emailText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p: Editable?) {
-                signinController.get_mailAddress(p.toString())
+                signinController.onInputMailAddress(p.toString())
             }
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
         passwordText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p: Editable?) {
-                signinController.get_password(p.toString())
+                signinController.onInputPassword(p.toString())
             }
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
         confirmationPassText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p: Editable?) {
-                signinController.get_confirmationPass(p.toString())
+                signinController.onInputConfirmationPass(p.toString())
             }
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}

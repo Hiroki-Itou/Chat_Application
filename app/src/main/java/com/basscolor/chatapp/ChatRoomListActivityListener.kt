@@ -4,16 +4,15 @@ import android.app.Activity
 import android.widget.ListView
 import android.widget.SimpleAdapter
 
-interface ChatListActivityListener {
+interface ChatRoomListActivityListener {
 
     val activity : Activity
     var listView : ListView
 
-    fun load_ChatList()
-    fun add_Chatlist()
-    fun select_ChatList(mutableMap:MutableMap<String,Any>)
+    fun loadChatList()
+    fun addChatlist()
+    fun selectChatroom(mutableMap:MutableMap<String,Any>)
     fun logOut()
     fun reload()
-
 
 }

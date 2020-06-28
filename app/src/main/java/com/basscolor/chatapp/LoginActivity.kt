@@ -24,11 +24,11 @@ class LoginActivity : Activity() {
         val progressView = findViewById<ConstraintLayout>(R.id.progressView)
         progressView.visibility = android.widget.ProgressBar.INVISIBLE
 
-        _login_Controller = LoginController(this)
+        _login_Controller = LoginActivityController(this)
 
         emailText.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(p: Editable?) {
-                _login_Controller.get_mailAddress(p.toString())
+                _login_Controller.onInputMailAddress(p.toString())
             }
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -36,7 +36,7 @@ class LoginActivity : Activity() {
 
         passwordText.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(p: Editable?) {
-                _login_Controller.get_password(p.toString())
+                _login_Controller.onInputPassword(p.toString())
             }
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -44,17 +44,17 @@ class LoginActivity : Activity() {
 
         loginButton.setOnClickListener {
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            _login_Controller.log_in()
+            _login_Controller.onLogIn()
         }
 
         accountCreationButton.setOnClickListener {
-            _login_Controller.to_user_registration_screen()
+            _login_Controller.toUserRregistration()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        _login_Controller.login_Check()
+        _login_Controller.loginCheck()
     }
 
 

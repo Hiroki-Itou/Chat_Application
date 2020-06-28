@@ -2,9 +2,11 @@ package com.basscolor.chatapp
 
 import android.content.ContentValues
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 
-class RegistrationManagement :Colleague{
+class LandlordList :Colleague{
 
     private lateinit var mediator: Mediator
     private val firestore = FirebaseFirestore.getInstance()
@@ -26,10 +28,16 @@ class RegistrationManagement :Colleague{
     }
 
 
-    fun registration(registData:Map<String,String?>){
+    fun registration(userData: UserData){
+
+        val registData = hashMapOf(
+            "name" to userData.getName(),
+            "email" to userData.getEmail(),
+            "userID" to userData.getUserID()
+        )
 
         firestore.collection("users")
-            .document(registData["uid"]as String)
+            .document(userData.getUserID())
             .set(registData)
             .addOnSuccessListener {
                 mediator.colleagueSuccess(this)
