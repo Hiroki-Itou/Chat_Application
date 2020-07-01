@@ -34,8 +34,9 @@ class ChatRoomActivity:Activity() {
         val sendButton = findViewById<ImageButton>(R.id.sendButton)
         sendButton.setOnClickListener {
 
-            editText.editableText.clear()
             chatRoomActivityListener.sendMessage()
+
+            editText.editableText.clear()
         }
     }
 }

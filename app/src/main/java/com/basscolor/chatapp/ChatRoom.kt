@@ -27,7 +27,7 @@ class Chatroom (val document:Map<String, Any>):Serializable{
 
     fun receiveMessage(){
         firestore = FirebaseFirestore.getInstance()
-        firestore!!.collection("chatrooms").document(document["roomID"] as String).collection("messages").orderBy("date", Query.Direction.DESCENDING)
+        firestore!!.collection("chatrooms").document(document["roomID"] as String).collection("messages").orderBy("date", Query.Direction.ASCENDING)
             .addSnapshotListener{values,e ->
 
             if(values == null)return@addSnapshotListener

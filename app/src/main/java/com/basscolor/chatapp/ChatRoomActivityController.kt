@@ -3,14 +3,14 @@ package com.basscolor.chatapp
 import android.app.Activity
 import android.widget.ListView
 import android.widget.SimpleAdapter
+import androidx.core.view.size
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.QuerySnapshot
 import java.text.SimpleDateFormat
 
 class ChatRoomActivityController(override val activity: Activity, override val chatroom: Chatroom, override val listView: ListView) :ChatRoomActivityListener ,receiveMessageListener{
 
-    var message : String = ""
-
+    private var message : String = ""
     init {
         chatroom.interfase = this
         chatroom.receiveMessage()
@@ -34,6 +34,8 @@ class ChatRoomActivityController(override val activity: Activity, override val c
         val to = intArrayOf(R.id.left_userIcon,R.id.left_messageView,R.id.left_timeStamp)
         val adapter = SimpleAdapter(activity,roomList,R.layout.left_speech_bubble,from,to)
         listView.adapter = adapter
+
+        listView.setSelection(listView.count-1)
     }
 
 
