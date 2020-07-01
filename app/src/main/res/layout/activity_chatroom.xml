@@ -6,6 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ListView
+        android:id="@+id/chatListView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/editMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout4"
         android:layout_width="0dp"
@@ -19,6 +28,8 @@
             android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
             android:gravity="center"
             android:text="UserName"
             android:textAllCaps="false"
@@ -40,36 +51,20 @@
             app:srcCompat="@android:drawable/ic_menu_call" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="#C2F4FF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4">
-
-        <LinearLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
-
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/editMessage"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:background="@drawable/input_view_frame"
         android:ems="10"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="@+id/scrollView"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton"
+        android:paddingLeft="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sendButton"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/sendButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/input_view_frame"

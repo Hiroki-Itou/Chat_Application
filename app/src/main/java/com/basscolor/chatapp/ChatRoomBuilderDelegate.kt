@@ -1,6 +1,6 @@
 package com.basscolor.chatapp
 
-interface ChatroomBuilderDelegate {
+interface ChatRoomBuilderDelegate {
 
     fun BuildSuccess()
     fun BuildError(e:Exception)

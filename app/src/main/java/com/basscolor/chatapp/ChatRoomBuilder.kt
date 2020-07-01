@@ -4,7 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.Serializable
 
-class ChatroomBuilder(val delegate:ChatroomBuilderDelegate){
+class ChatRoomBuilder(val delegate:ChatRoomBuilderDelegate){
 
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 

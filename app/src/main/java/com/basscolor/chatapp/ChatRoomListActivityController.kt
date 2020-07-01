@@ -23,9 +23,7 @@ class ChatRoomListActivityController(override val activity: Activity, override v
 
         landlord.loadChatroomListInformation()
 
-//        _firestore.collection("users").addSnapshotListener{values,e ->
-//         //リアルタイム取得方法
-//        }
+
     }
 
 
@@ -73,9 +71,9 @@ class ChatRoomListActivityController(override val activity: Activity, override v
 
         val chatroom = mutableMap["class"] as Chatroom
 
-
-        Log.d(TAG,"チャットをクリックしました"+chatroom.document["userNames"])
-
+        val intent = Intent(activity,ChatRoomActivity::class.java)
+        intent.putExtra("chatroom",chatroom)
+        activity.startActivity(intent)
 
     }
 
