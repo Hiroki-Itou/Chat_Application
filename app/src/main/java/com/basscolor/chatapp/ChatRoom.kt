@@ -8,16 +8,17 @@ import com.google.firebase.firestore.QuerySnapshot
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import com.google.firebase.*
+import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
-class Chatroom (val document:Map<String, Any>):Serializable{
+class ChatRoom (val document:Map<String, Any>):Serializable{
      private var firestore : FirebaseFirestore? = null
     var interfase : receiveMessageListener? = null
 
     fun toSpeak(message:String){
 
 
-        val message = hashMapOf("message" to message , "date" to Timestamp(Date()))
+        val message = hashMapOf("userID" to FirebaseAuth.getInstance().currentUser!!.uid ,"message" to message , "date" to Timestamp(Date()))
         firestore!!.collection("chatrooms").document(document["roomID"] as String).collection("messages").document().set(message).addOnSuccessListener {
             Log.d(TAG,"送信しました")
         }.addOnFailureListener { e->

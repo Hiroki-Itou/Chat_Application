@@ -30,7 +30,7 @@ class ChatRoomListActivity : Activity() {
         chatList.setOnItemClickListener{parent,view,position,id->
 
             val item = parent.adapter.getItem(position) as MutableMap<String,Any>
-            chatListController.selectChatroom(item)
+            chatListController.selectChatRoom(item)
         }
 
     }

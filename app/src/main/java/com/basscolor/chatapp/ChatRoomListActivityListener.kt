@@ -11,7 +11,7 @@ interface ChatRoomListActivityListener {
 
     fun loadChatList()
     fun addChatlist()
-    fun selectChatroom(mutableMap:MutableMap<String,Any>)
+    fun selectChatRoom(mutableMap:MutableMap<String,Any>)
     fun logOut()
     fun reload()
 

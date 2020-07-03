@@ -11,7 +11,7 @@ class Landlord(val userID:String,val delegate:LandlordDelegate) {
     fun loadChatroomListInformation(){
 
         firestore.collection("chatrooms").whereArrayContains("listID",userID).get().addOnSuccessListener {result ->
-            val containers = ArrayList<Chatroom>()
+            val containers = ArrayList<ChatRoom>()
 
             if(result.isEmpty){
                 delegate.readInformationFailure()
@@ -19,7 +19,7 @@ class Landlord(val userID:String,val delegate:LandlordDelegate) {
             }
 
             for (doc in result) {
-                val container = Chatroom(doc.data)
+                val container = ChatRoom(doc.data)
                 containers.add(container)
             }
             delegate.readInformationSuccess(containers)

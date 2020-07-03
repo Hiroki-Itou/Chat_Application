@@ -26,6 +26,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.github.bassaer:chatmessageview:2.0.1'
     implementation 'com.google.firebase:firebase-analytics:17.4.2'
     implementation 'com.google.firebase:firebase-firestore-ktx:21.2.1'
     implementation 'com.google.firebase:firebase-auth:19.1.0'

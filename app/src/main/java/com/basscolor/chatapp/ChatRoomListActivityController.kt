@@ -27,13 +27,13 @@ class ChatRoomListActivityController(override val activity: Activity, override v
     }
 
 
-    override fun readInformationSuccess(chatrooms: ArrayList<Chatroom>) {
+    override fun readInformationSuccess(chatRooms: ArrayList<ChatRoom>) {
 
         val roomList: MutableList<MutableMap<String,Any?>> = mutableListOf()
 
         val currentName = firebaseAuth.currentUser!!.displayName
 
-        chatrooms.forEach Loop@{room ->
+        chatRooms.forEach Loop@{room ->
 
             val userNames = room.document["userNames"] as ArrayList<String>
             val roomName :String
@@ -43,7 +43,7 @@ class ChatRoomListActivityController(override val activity: Activity, override v
                 userNames[0]
             }
 
-            val roomData = mutableMapOf("imageView" to R.drawable.icon,"roomName" to roomName, "doorMessagePlate" to room.document["doorMessagePlate"], "class" to room)
+            val roomData = mutableMapOf("imageView" to R.drawable.aoi,"roomName" to roomName, "doorMessagePlate" to room.document["doorMessagePlate"], "class" to room)
             roomList.add(roomData)
         }
 
@@ -67,12 +67,12 @@ class ChatRoomListActivityController(override val activity: Activity, override v
 
     }
 
-    override fun selectChatroom(mutableMap:MutableMap<String,Any>) {
+    override fun selectChatRoom(mutableMap:MutableMap<String,Any>) {
 
-        val chatroom = mutableMap["class"] as Chatroom
+        val chatroom = mutableMap["class"] as ChatRoom
 
         val intent = Intent(activity,ChatRoomActivity::class.java)
-        intent.putExtra("chatroom",chatroom)
+        intent.putExtra("chatRoom",chatroom)
         activity.startActivity(intent)
 
     }
