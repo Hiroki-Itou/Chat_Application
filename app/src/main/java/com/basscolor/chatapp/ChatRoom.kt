@@ -15,14 +15,15 @@ class ChatRoom (val document:Map<String, Any>):Serializable{
      private var firestore : FirebaseFirestore? = null
     var interfase : receiveMessageListener? = null
 
-    fun toSpeak(message:String){
+    fun sendMessage(message:String){
 
+        val currentUser = FirebaseAuth.getInstance().currentUser!!
 
-        val message = hashMapOf("userID" to FirebaseAuth.getInstance().currentUser!!.uid ,"message" to message , "date" to Timestamp(Date()))
+        val message = hashMapOf("userID" to currentUser.uid ,"message" to message , "date" to Timestamp(Date()))
         firestore!!.collection("chatrooms").document(document["roomID"] as String).collection("messages").document().set(message).addOnSuccessListener {
-            Log.d(TAG,"送信しました")
+            Log.d(TAG,"メッセージを送信しました")
         }.addOnFailureListener { e->
-            Log.e(TAG,"messageの送信でerrorが発生しました"+e)
+            Log.e(TAG,"メッセージの送信でエラーが発生しました"+e)
         }
     }
 

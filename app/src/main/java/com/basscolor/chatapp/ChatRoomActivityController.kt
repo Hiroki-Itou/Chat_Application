@@ -23,8 +23,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ChatRoomActivityController(override val activity: Activity,override val chatRoom:ChatRoom) :ChatRoomActivityListener ,receiveMessageListener{
+
 
     private lateinit var chatView: MessageView
     private lateinit var me: ChatUser
@@ -36,65 +38,52 @@ class ChatRoomActivityController(override val activity: Activity,override val ch
 
         chatRoom.interfase = this
         chatRoom.receiveMessage()
-        var message = ""
 
+        chatUserSetting()
+        chatViewSetting()
+    }
 
+    private fun chatUserSetting(){
+        val myIcon = BitmapFactory.decodeResource(activity.resources, R.drawable.icon)
+        val yourIcon = BitmapFactory.decodeResource(activity.resources, R.drawable.icon)
 
-        val myID = 0
-        val yourID = 1
-        val myIcon = BitmapFactory.decodeResource(activity.resources,R.drawable.setuna)
-        val yourIcon = BitmapFactory.decodeResource(activity.resources,R.drawable.aoi)
-        val myName = "せつな"
-        val yourName = "葵"
+        val currentUser = FirebaseAuth.getInstance().currentUser!!
+        val userNames = chatRoom.document["userNames"] as ArrayList<String>
+        if(userNames[0] == currentUser.displayName){
+            me = ChatUser(0, userNames[0], myIcon)
+            you = ChatUser(1,userNames[1] , yourIcon)
+        }else{
+            you = ChatUser(0, userNames[0], myIcon)
+            me = ChatUser(1,userNames[1] , yourIcon)
+        }
+    }
 
-        me = ChatUser(myID,myName,myIcon)
-        you = ChatUser(yourID,yourName,yourIcon)
-
-
-
+    private fun chatViewSetting(){
         chatView = activity.findViewById(R.id.message_view)
-        chatView.setRightBubbleColor(ContextCompat.getColor(activity,R.color.green500))
+        chatView.setRightBubbleColor(ContextCompat.getColor(activity,R.color.colorPrimary))
         chatView.setLeftBubbleColor(ContextCompat.getColor(activity,R.color.gray200))
         chatView.setBackgroundColor(ContextCompat.getColor(activity,R.color.blueGray200))
+        chatView.setRightMessageTextColor(ContextCompat.getColor(activity,R.color.messageText_black))
+        chatView.setLeftMessageTextColor(ContextCompat.getColor(activity,R.color.messageText_black))
+        chatView.setSendTimeTextColor(ContextCompat.getColor(activity,R.color.timeText_white))
+    }
 
-
-        chatView.setRightMessageTextColor(Color.BLACK)
-        chatView.setLeftMessageTextColor(Color.BLACK)
-        chatView.setUsernameTextColor(Color.BLACK)
-        chatView.setSendTimeTextColor(Color.BLACK)
-        chatView.setMessageMarginTop(5)
-        chatView.setMessageMarginBottom(5)
-
-        val editText = activity.findViewById<EditText>(R.id.editText)
-        val sendButton = activity.findViewById<ImageButton>(R.id.sendButton)
-
-        editText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p: Editable?) {
-
-               message = p.toString()
-            }
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        })
-        sendButton.setOnClickListener {
-
-            if(message == "")return@setOnClickListener
-
-            chatRoom.toSpeak(message)
-            editText.text.clear()
-        }
+    override fun onInputMessage(message: String) {
 
     }
 
+    override fun toSpeak(message: String) {
+        if(message == "")return
+        chatRoom.sendMessage(message)
+    }
+
+
     override fun receive(snapshots: QuerySnapshot) {
-
-
 
         if(count == 0){
 
             for (s in snapshots){
 
-                Log.d(TAG,"snapshotsがまわってます")
                 val sdf = SimpleDateFormat("MM-dd HH:mm")
                 val d = s["date"] as Timestamp
                 val timeStamp = sdf.format(d.toDate())
@@ -136,9 +125,10 @@ class ChatRoomActivityController(override val activity: Activity,override val ch
         calendar.time = date.toDate()
         val message = Message.Builder()
             .setUser(me)
+            .setUsernameVisibility(false)
             .setRight(true)
             .setText(snapshot["message"] as String)
-            .hideIcon(false)
+            .hideIcon(true)
             .setSendTime(calendar)
             .build()
         chatView.setMessage(message)
@@ -152,6 +142,7 @@ class ChatRoomActivityController(override val activity: Activity,override val ch
 
         val receivedMessage = Message.Builder()
             .setUser(you)
+            .setUsernameVisibility(false)
             .setRight(false)
             .setText(snapshot["message"] as String)
             .hideIcon(false)

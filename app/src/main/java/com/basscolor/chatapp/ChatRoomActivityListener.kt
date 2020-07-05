@@ -8,4 +8,8 @@ interface ChatRoomActivityListener {
     val activity : Activity
     val chatRoom : ChatRoom
 
+    fun onInputMessage(message:String)
+
+    fun toSpeak(message:String)
+
 }

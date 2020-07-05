@@ -13,6 +13,8 @@
         android:layout_height="0dp"
         app:message_max_width="230dp"
         app:option_button_enable="false"
+        app:message_font_size="15dp"
+        app:time_label_font_size="10dp"
         app:layout_constraintBottom_toTopOf="@+id/editText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
