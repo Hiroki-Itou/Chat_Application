@@ -11,7 +11,10 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:orientation="horizontal"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:paddingLeft="15dp"
+        android:paddingTop="15dp"
+        android:paddingRight="15dp"
+        tools:srcCompat="@drawable/ic_user" />
 
     <LinearLayout
         android:layout_width="match_parent"

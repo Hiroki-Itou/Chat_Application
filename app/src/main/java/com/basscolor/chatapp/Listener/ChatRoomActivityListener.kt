@@ -1,7 +1,7 @@
-package com.basscolor.chatapp
+package com.basscolor.chatapp.Listener
 
 import android.app.Activity
-import android.widget.ScrollView
+import com.basscolor.chatapp.ChatRoom
 
 interface ChatRoomActivityListener {
 

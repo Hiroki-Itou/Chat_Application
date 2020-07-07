@@ -1,19 +1,24 @@
-package com.basscolor.chatapp
+package com.basscolor.chatapp.Controller
 
 import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
-import java.lang.Exception
+import com.basscolor.chatapp.Activity.ChatRoomListActivity
+import com.basscolor.chatapp.Activity.SigninActivity
+import com.basscolor.chatapp.FireBase.Authentication
+import com.basscolor.chatapp.LoadingIndicator
+import com.basscolor.chatapp.Listener.LoginActivityListener
 
 
-class LoginActivityController(override val activity: Activity) : LoginActivityListener,LoginDelegate{
+class LoginActivityController(override val activity: Activity) :
+    LoginActivityListener {
 
     private var _email : String? = null
     private var _password : String? = null
     private val authentication = Authentication()
-    private val login = Login(this)
-    private var loadingIndicator: LoadingIndicator = LoadingIndicator(activity)
+    private var loadingIndicator: LoadingIndicator =
+        LoadingIndicator(activity)
 
     override fun loginCheck() {
 
@@ -21,7 +26,7 @@ class LoginActivityController(override val activity: Activity) : LoginActivityLi
             loadingIndicator.start()
             Log.d(TAG,"ログインしています")
 
-            loginSuccess()
+            toActivity()
 
         }else{
             loadingIndicator.stop()
@@ -42,10 +47,24 @@ class LoginActivityController(override val activity: Activity) : LoginActivityLi
         Log.d(TAG,"Passwordを取得しました= "+this._password!!)
     }
 
-    override fun onLogIn() {
+    override  fun  onLogIn() {
         if (_email == null || _password == null) return
         loadingIndicator.start()
-        login.loginToChat(_email!!,_password!!)
+
+        val authentication = Authentication()
+
+        authentication.login(_email!!,_password!!,{s ->
+            Log.d(TAG, s)
+            loadingIndicator.stop()
+            toActivity()
+        }, {e ->
+            Log.e(TAG,"ログイン中にエラーが発生しました。"+e)
+        })
+    }
+
+    private fun toActivity(){
+        val intent = Intent(activity, ChatRoomListActivity::class.java)
+        activity.startActivity(intent)
     }
 
     override fun toUserRregistration() {
@@ -53,21 +72,7 @@ class LoginActivityController(override val activity: Activity) : LoginActivityLi
         activity.startActivity(Intent(activity, SigninActivity::class.java))
     }
 
-    override fun loginSuccess() {
-        Log.d(TAG, "認証確認が完了しました")
-        loadingIndicator.stop()
-        val intent = Intent(activity, ChatRoomListActivity::class.java)
-        activity.startActivity(intent)
-    }
 
-    override fun loginFailure() {
-
-    }
-
-    override fun loginError(e: Exception?) {
-
-        Log.e(TAG,"ログイン中にエラーが発生しました。"+e)
-    }
 
 
 

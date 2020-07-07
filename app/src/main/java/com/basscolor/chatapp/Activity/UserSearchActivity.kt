@@ -1,13 +1,16 @@
-package com.basscolor.chatapp
+package com.basscolor.chatapp.Activity
 
 import android.app.Activity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.SearchView
+import com.basscolor.chatapp.R
+import com.basscolor.chatapp.Controller.UserSearchActivityController
+import com.basscolor.chatapp.Listener.UserSearchActivityListener
 
 class UserSearchActivity : Activity() {
 
-    private lateinit var friendSearchController :UserSearchActivityListener
+    private lateinit var friendSearchController : UserSearchActivityListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

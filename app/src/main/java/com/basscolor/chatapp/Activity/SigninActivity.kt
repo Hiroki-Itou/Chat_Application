@@ -1,4 +1,4 @@
-package com.basscolor.chatapp
+package com.basscolor.chatapp.Activity
 
 import android.app.Activity
 import android.os.Bundle
@@ -7,6 +7,9 @@ import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.basscolor.chatapp.R
+import com.basscolor.chatapp.Controller.SigninActivityController
+import com.basscolor.chatapp.Listener.SigninActivityListener
 
 class SigninActivity : Activity() {
 

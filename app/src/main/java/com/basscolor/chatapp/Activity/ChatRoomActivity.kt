@@ -1,9 +1,13 @@
-package com.basscolor.chatapp
+package com.basscolor.chatapp.Activity
 
 import android.app.Activity
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageButton
+import com.basscolor.chatapp.ChatRoom
+import com.basscolor.chatapp.Controller.ChatRoomActivityController
+import com.basscolor.chatapp.Listener.ChatRoomActivityListener
+import com.basscolor.chatapp.R
 
 class ChatRoomActivity:Activity() {
 
@@ -16,7 +20,8 @@ class ChatRoomActivity:Activity() {
         val intent = getIntent()
         val chatRoom = intent.getSerializableExtra("chatRoom") as ChatRoom
 
-        chatRoomActivityListener = ChatRoomActivityController(this,chatRoom)
+        chatRoomActivityListener =
+            ChatRoomActivityController(this, chatRoom)
 
         val editText = findViewById<EditText>(R.id.editText)
         val sendButton = findViewById<ImageButton>(R.id.sendButton)

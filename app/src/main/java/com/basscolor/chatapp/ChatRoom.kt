@@ -12,41 +12,31 @@ import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
 class ChatRoom (val document:Map<String, Any>):Serializable{
-     private var firestore : FirebaseFirestore? = null
-    var interfase : receiveMessageListener? = null
 
-    fun sendMessage(message:String){
-
-        val currentUser = FirebaseAuth.getInstance().currentUser!!
-
-        val message = hashMapOf("userID" to currentUser.uid ,"message" to message , "date" to Timestamp(Date()))
-        firestore!!.collection("chatrooms").document(document["roomID"] as String).collection("messages").document().set(message).addOnSuccessListener {
-            Log.d(TAG,"メッセージを送信しました")
-        }.addOnFailureListener { e->
-            Log.e(TAG,"メッセージの送信でエラーが発生しました"+e)
-        }
-    }
-
-    fun receiveMessage(){
-        firestore = FirebaseFirestore.getInstance()
-        firestore!!.collection("chatrooms").document(document["roomID"] as String).collection("messages").orderBy("date", Query.Direction.ASCENDING)
-            .addSnapshotListener{values,e ->
-
-            if(values == null)return@addSnapshotListener
-
-            if(values.isEmpty){
-                Log.d(TAG,"取得したmessageは空です")
-                return@addSnapshotListener
-            }
-            interfase?.receive(values)
-        }
-    }
-
-
-
-}
-
-interface receiveMessageListener{
-
-    fun receive(snapshots : QuerySnapshot)
+//    fun sendMessage(message:String){
+//
+//        val currentUser = FirebaseAuth.getInstance().currentUser!!
+//
+//        val message = hashMapOf("userID" to currentUser.uid ,"message" to message , "date" to Timestamp(Date()))
+//        firestore!!.collection("chatrooms").document(document["roomID"] as String).collection("messages").document().set(message).addOnSuccessListener {
+//            Log.d(TAG,"メッセージを送信しました")
+//        }.addOnFailureListener { e->
+//            Log.e(TAG,"メッセージの送信でエラーが発生しました"+e)
+//        }
+//    }
+//
+//    fun receiveMessage(){
+//        firestore = FirebaseFirestore.getInstance()
+//        firestore!!.collection("chatrooms").document(document["roomID"] as String).collection("messages").orderBy("date", Query.Direction.ASCENDING)
+//            .addSnapshotListener{values,e ->
+//
+//            if(values == null)return@addSnapshotListener
+//
+//            if(values.isEmpty){
+//                Log.d(TAG,"取得したmessageは空です")
+//                return@addSnapshotListener
+//            }
+//            interfase?.receive(values)
+//        }
+//    }
 }

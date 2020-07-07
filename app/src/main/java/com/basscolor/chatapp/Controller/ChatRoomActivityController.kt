@@ -1,51 +1,51 @@
-package com.basscolor.chatapp
+package com.basscolor.chatapp.Controller
 
 import android.app.Activity
 import android.content.ContentValues.TAG
 import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.View
-import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.size
+import com.basscolor.chatapp.ChatRoom
+import com.basscolor.chatapp.FireBase.MessageDatabase
+import com.basscolor.chatapp.Listener.ChatRoomActivityListener
+import com.basscolor.chatapp.R
 import com.github.bassaer.chatmessageview.model.ChatUser
 import com.github.bassaer.chatmessageview.model.Message
-import com.github.bassaer.chatmessageview.view.ChatView
 import com.github.bassaer.chatmessageview.view.MessageView
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ChatRoomActivityController(override val activity: Activity,override val chatRoom:ChatRoom) :ChatRoomActivityListener ,receiveMessageListener{
-
+class ChatRoomActivityController(override val activity: Activity,override val chatRoom: ChatRoom) : ChatRoomActivityListener {
 
     private lateinit var chatView: MessageView
     private lateinit var me: ChatUser
     private lateinit var you: ChatUser
+    private lateinit var messageDatabase:MessageDatabase
 
     private var count = 0
 
     init {
 
-        chatRoom.interfase = this
-        chatRoom.receiveMessage()
-
+        messageDatabase = MessageDatabase()
+        messageDatabase.receiveMessage(chatRoom.document) { snapshot ->
+            receive(snapshot)
+        }
         chatUserSetting()
         chatViewSetting()
     }
 
     private fun chatUserSetting(){
-        val myIcon = BitmapFactory.decodeResource(activity.resources, R.drawable.icon)
-        val yourIcon = BitmapFactory.decodeResource(activity.resources, R.drawable.icon)
+        val myIcon = BitmapFactory.decodeResource(activity.resources,
+            R.drawable.ic_user
+        )
+        val yourIcon = BitmapFactory.decodeResource(activity.resources,
+            R.drawable.ic_user
+        )
 
         val currentUser = FirebaseAuth.getInstance().currentUser!!
         val userNames = chatRoom.document["userNames"] as ArrayList<String>
@@ -60,12 +60,24 @@ class ChatRoomActivityController(override val activity: Activity,override val ch
 
     private fun chatViewSetting(){
         chatView = activity.findViewById(R.id.message_view)
-        chatView.setRightBubbleColor(ContextCompat.getColor(activity,R.color.colorPrimary))
-        chatView.setLeftBubbleColor(ContextCompat.getColor(activity,R.color.gray200))
-        chatView.setBackgroundColor(ContextCompat.getColor(activity,R.color.blueGray200))
-        chatView.setRightMessageTextColor(ContextCompat.getColor(activity,R.color.messageText_black))
-        chatView.setLeftMessageTextColor(ContextCompat.getColor(activity,R.color.messageText_black))
-        chatView.setSendTimeTextColor(ContextCompat.getColor(activity,R.color.timeText_white))
+        chatView.setRightBubbleColor(ContextCompat.getColor(activity,
+            R.color.colorPrimary
+        ))
+        chatView.setLeftBubbleColor(ContextCompat.getColor(activity,
+            R.color.gray200
+        ))
+        chatView.setBackgroundColor(ContextCompat.getColor(activity,
+            R.color.blueGray200
+        ))
+        chatView.setRightMessageTextColor(ContextCompat.getColor(activity,
+            R.color.messageText_black
+        ))
+        chatView.setLeftMessageTextColor(ContextCompat.getColor(activity,
+            R.color.messageText_black
+        ))
+        chatView.setSendTimeTextColor(ContextCompat.getColor(activity,
+            R.color.timeText_white
+        ))
     }
 
     override fun onInputMessage(message: String) {
@@ -74,11 +86,16 @@ class ChatRoomActivityController(override val activity: Activity,override val ch
 
     override fun toSpeak(message: String) {
         if(message == "")return
-        chatRoom.sendMessage(message)
+        messageDatabase.sendMessage(chatRoom.document,message,
+            {s->
+                Log.e(TAG, s)
+
+            },{e->
+                Log.e(TAG, "メッセージの送信に失敗しました", e)
+            })
     }
 
-
-    override fun receive(snapshots: QuerySnapshot) {
+    private fun receive(snapshots: QuerySnapshot) {
 
         if(count == 0){
 

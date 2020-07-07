@@ -1,4 +1,4 @@
-package com.basscolor.chatapp
+package com.basscolor.chatapp.Controller
 
 import android.app.Activity
 import android.content.ContentValues.TAG
@@ -6,11 +6,16 @@ import android.content.Intent
 import android.util.Log
 import android.widget.ListView
 import android.widget.SimpleAdapter
+import com.basscolor.chatapp.*
+import com.basscolor.chatapp.Activity.ChatRoomActivity
+import com.basscolor.chatapp.Activity.UserSearchActivity
+import com.basscolor.chatapp.FireBase.ChatroomDatabase
+import com.basscolor.chatapp.Listener.ChatRoomListActivityListener
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.Exception
 import kotlin.collections.ArrayList
 
-class ChatRoomListActivityController(override val activity: Activity, override var listView: ListView) :ChatRoomListActivityListener,LandlordDelegate {
+class ChatRoomListActivityController(override val activity: Activity, override var listView: ListView) : ChatRoomListActivityListener {
 
 
 
@@ -19,16 +24,23 @@ class ChatRoomListActivityController(override val activity: Activity, override v
 
     override fun loadChatList() {
 
-        val landlord = Landlord(firebaseAuth.currentUser!!.uid,this)
 
-        landlord.loadChatroomListInformation()
+        val chatroomDatabase = ChatroomDatabase()
+        chatroomDatabase.loadChatroomList(
+            {list->
+                displayChatroomList(list)
+            },{s->
+                Log.d(TAG, s)
+            },{e->
+                Log.e(TAG, "チャットリストの取得に失敗しました", e)
+            })
+
+        //landlord.loadChatroomListInformation()
 
 
     }
 
-
-    override fun readInformationSuccess(chatRooms: ArrayList<ChatRoom>) {
-
+    private fun displayChatroomList(chatRooms: ArrayList<ChatRoom>){
         val roomList: MutableList<MutableMap<String,Any?>> = mutableListOf()
 
         val currentName = firebaseAuth.currentUser!!.displayName
@@ -43,24 +55,20 @@ class ChatRoomListActivityController(override val activity: Activity, override v
                 userNames[0]
             }
 
-            val roomData = mutableMapOf("imageView" to R.drawable.aoi,"roomName" to roomName, "doorMessagePlate" to room.document["doorMessagePlate"], "class" to room)
+            val roomData = mutableMapOf("imageView" to R.drawable.ic_user,"roomName" to roomName, "doorMessagePlate" to room.document["doorMessagePlate"], "class" to room)
             roomList.add(roomData)
         }
 
         val from = arrayOf("imageView","roomName", "doorMessagePlate")
-        val to = intArrayOf(R.id.imageView,R.id.roomName, R.id.doorMessagePlate)
-        val adapter = SimpleAdapter(activity,roomList,R.layout.list_items,from,to)
+        val to = intArrayOf(
+            R.id.imageView,
+            R.id.roomName,
+            R.id.doorMessagePlate
+        )
+        val adapter = SimpleAdapter(activity,roomList,
+            R.layout.list_items,from,to)
         listView.adapter = adapter
     }
-
-    override fun readInformationFailure() {
-        Log.w(TAG, "まだチャットルームは作成されていません")
-    }
-
-    override fun readInformationError(e: Exception) {
-        Log.w(TAG, "チャットリストの取得に失敗しました", e)
-    }
-
 
     override fun addChatlist() {
         activity.startActivity(Intent(activity, UserSearchActivity::class.java))
@@ -71,7 +79,7 @@ class ChatRoomListActivityController(override val activity: Activity, override v
 
         val chatroom = mutableMap["class"] as ChatRoom
 
-        val intent = Intent(activity,ChatRoomActivity::class.java)
+        val intent = Intent(activity, ChatRoomActivity::class.java)
         intent.putExtra("chatRoom",chatroom)
         activity.startActivity(intent)
 

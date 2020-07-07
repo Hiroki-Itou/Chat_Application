@@ -1,4 +1,4 @@
-package com.basscolor.chatapp
+package com.basscolor.chatapp.Activity
 
 import android.app.Activity
 import android.os.Bundle
@@ -8,6 +8,9 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.basscolor.chatapp.Controller.LoginActivityController
+import com.basscolor.chatapp.Listener.LoginActivityListener
+import com.basscolor.chatapp.R
 
 class LoginActivity : Activity() {
 

@@ -10,20 +10,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".LoginActivity" >
+        <activity android:name=".Activity.LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SigninActivity" >
+        <activity android:name=".Activity.SigninActivity" >
         </activity>
-        <activity android:name=".ChatRoomListActivity" >
+        <activity android:name=".Activity.ChatRoomListActivity" >
         </activity>
-        <activity android:name=".UserSearchActivity" >
+        <activity android:name=".Activity.UserSearchActivity" >
         </activity>
-        <activity android:name=".ChatRoomActivity"
+        <activity android:name=".Activity.ChatRoomActivity"
             android:windowSoftInputMode="stateHidden|adjustResize">
         </activity>
 
