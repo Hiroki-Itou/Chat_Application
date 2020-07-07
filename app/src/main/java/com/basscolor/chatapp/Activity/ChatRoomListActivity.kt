@@ -4,20 +4,20 @@ import android.app.Activity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ListView
-import com.basscolor.chatapp.Controller.ChatRoomListActivityController
-import com.basscolor.chatapp.Listener.ChatRoomListActivityListener
+import com.basscolor.chatapp.Controller.ChatroomListActivityController
+import com.basscolor.chatapp.Listener.ChatroomListActivityListener
 import com.basscolor.chatapp.R
 
 class ChatRoomListActivity : Activity() {
 
-    private lateinit var chatListController: ChatRoomListActivityListener
+    private lateinit var chatListController: ChatroomListActivityListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chatlist)
         val chatList = findViewById<ListView>(R.id.chatList)
         chatListController =
-            ChatRoomListActivityController(this, chatList)
+            ChatroomListActivityController(this, chatList)
 
         val createRoomButton = findViewById<Button>(R.id.create_room)
         createRoomButton.setOnClickListener {

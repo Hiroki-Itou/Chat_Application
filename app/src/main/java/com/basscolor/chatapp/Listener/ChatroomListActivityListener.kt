@@ -4,7 +4,7 @@ import android.app.Activity
 import android.widget.ListView
 import android.widget.SimpleAdapter
 
-interface ChatRoomListActivityListener {
+interface ChatroomListActivityListener {
 
     val activity : Activity
     var listView : ListView

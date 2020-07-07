@@ -1,12 +1,12 @@
 package com.basscolor.chatapp.Listener
 
 import android.app.Activity
-import com.basscolor.chatapp.ChatRoom
+import com.basscolor.chatapp.Chatroom
 
-interface ChatRoomActivityListener {
+interface ChatroomActivityListener {
 
     val activity : Activity
-    val chatRoom : ChatRoom
+    val chatroom : Chatroom
 
     fun onInputMessage(message:String)
 

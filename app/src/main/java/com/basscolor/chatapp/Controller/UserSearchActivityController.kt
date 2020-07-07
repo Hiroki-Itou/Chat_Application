@@ -8,7 +8,6 @@ import com.basscolor.chatapp.FireBase.ChatroomDatabase
 import com.basscolor.chatapp.FireBase.UserDatabase
 import com.basscolor.chatapp.Listener.UserSearchActivityListener
 import kotlinx.android.synthetic.main.activity_friend_search.*
-import kotlin.Exception
 
 class UserSearchActivityController(override val activity: Activity) : UserSearchActivityListener {
 

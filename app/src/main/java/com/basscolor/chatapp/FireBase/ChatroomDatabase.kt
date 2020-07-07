@@ -1,6 +1,6 @@
 package com.basscolor.chatapp.FireBase
 
-import com.basscolor.chatapp.ChatRoom
+import com.basscolor.chatapp.Chatroom
 import com.basscolor.chatapp.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,11 +20,11 @@ class ChatroomDatabase {
         }
     }
 
-    fun loadChatroomList(found:(ArrayList<ChatRoom>)->Unit,empty:(String)->Unit,failure:(Exception)->Unit ){
+    fun loadChatroomList(found:(ArrayList<Chatroom>)->Unit, empty:(String)->Unit, failure:(Exception)->Unit ){
 
         val currentUser = FirebaseAuth.getInstance().currentUser
         firestore.collection("chatrooms").whereArrayContains("listID",currentUser!!.uid).get().addOnSuccessListener {result ->
-            val chatrooms = ArrayList<ChatRoom>()
+            val chatrooms = ArrayList<Chatroom>()
 
             if(result.isEmpty){
                 empty("チャットルームが見つかりませんでした")
@@ -32,7 +32,7 @@ class ChatroomDatabase {
             }
 
             for (doc in result) {
-                val chatroom = ChatRoom(doc.data)
+                val chatroom = Chatroom(doc.data)
                 chatrooms.add(chatroom)
             }
             found(chatrooms)

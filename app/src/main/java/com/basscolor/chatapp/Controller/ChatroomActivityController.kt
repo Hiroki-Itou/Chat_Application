@@ -5,9 +5,9 @@ import android.content.ContentValues.TAG
 import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.basscolor.chatapp.ChatRoom
+import com.basscolor.chatapp.Chatroom
 import com.basscolor.chatapp.FireBase.MessageDatabase
-import com.basscolor.chatapp.Listener.ChatRoomActivityListener
+import com.basscolor.chatapp.Listener.ChatroomActivityListener
 import com.basscolor.chatapp.R
 import com.github.bassaer.chatmessageview.model.ChatUser
 import com.github.bassaer.chatmessageview.model.Message
@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ChatRoomActivityController(override val activity: Activity,override val chatRoom: ChatRoom) : ChatRoomActivityListener {
+class ChatroomActivityController(override val activity: Activity, override val chatroom: Chatroom) : ChatroomActivityListener {
 
     private lateinit var chatView: MessageView
     private lateinit var me: ChatUser
@@ -32,7 +32,7 @@ class ChatRoomActivityController(override val activity: Activity,override val ch
     init {
 
         messageDatabase = MessageDatabase()
-        messageDatabase.receiveMessage(chatRoom.document) { snapshot ->
+        messageDatabase.receiveMessage(chatroom.document) { snapshot ->
             receive(snapshot)
         }
         chatUserSetting()
@@ -48,7 +48,7 @@ class ChatRoomActivityController(override val activity: Activity,override val ch
         )
 
         val currentUser = FirebaseAuth.getInstance().currentUser!!
-        val userNames = chatRoom.document["userNames"] as ArrayList<String>
+        val userNames = chatroom.document["userNames"] as ArrayList<String>
         if(userNames[0] == currentUser.displayName){
             me = ChatUser(0, userNames[0], myIcon)
             you = ChatUser(1,userNames[1] , yourIcon)
@@ -86,7 +86,7 @@ class ChatRoomActivityController(override val activity: Activity,override val ch
 
     override fun toSpeak(message: String) {
         if(message == "")return
-        messageDatabase.sendMessage(chatRoom.document,message,
+        messageDatabase.sendMessage(chatroom.document,message,
             {s->
                 Log.e(TAG, s)
 

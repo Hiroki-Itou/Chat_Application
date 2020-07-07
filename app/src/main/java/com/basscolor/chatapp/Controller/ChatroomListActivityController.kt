@@ -10,12 +10,11 @@ import com.basscolor.chatapp.*
 import com.basscolor.chatapp.Activity.ChatRoomActivity
 import com.basscolor.chatapp.Activity.UserSearchActivity
 import com.basscolor.chatapp.FireBase.ChatroomDatabase
-import com.basscolor.chatapp.Listener.ChatRoomListActivityListener
+import com.basscolor.chatapp.Listener.ChatroomListActivityListener
 import com.google.firebase.auth.FirebaseAuth
-import kotlin.Exception
 import kotlin.collections.ArrayList
 
-class ChatRoomListActivityController(override val activity: Activity, override var listView: ListView) : ChatRoomListActivityListener {
+class ChatroomListActivityController(override val activity: Activity, override var listView: ListView) : ChatroomListActivityListener {
 
 
 
@@ -40,7 +39,7 @@ class ChatRoomListActivityController(override val activity: Activity, override v
 
     }
 
-    private fun displayChatroomList(chatRooms: ArrayList<ChatRoom>){
+    private fun displayChatroomList(chatRooms: ArrayList<Chatroom>){
         val roomList: MutableList<MutableMap<String,Any?>> = mutableListOf()
 
         val currentName = firebaseAuth.currentUser!!.displayName
@@ -77,7 +76,7 @@ class ChatRoomListActivityController(override val activity: Activity, override v
 
     override fun selectChatRoom(mutableMap:MutableMap<String,Any>) {
 
-        val chatroom = mutableMap["class"] as ChatRoom
+        val chatroom = mutableMap["class"] as Chatroom
 
         val intent = Intent(activity, ChatRoomActivity::class.java)
         intent.putExtra("chatRoom",chatroom)

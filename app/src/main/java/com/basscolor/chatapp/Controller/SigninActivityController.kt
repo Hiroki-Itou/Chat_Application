@@ -3,7 +3,6 @@ package com.basscolor.chatapp.Controller
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.ContentValues.TAG
-import android.content.res.Resources
 import android.net.Uri
 import android.util.Log
 import com.basscolor.chatapp.*
