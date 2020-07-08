@@ -16,27 +16,11 @@ import kotlin.collections.ArrayList
 
 class ChatroomListActivityController(override val activity: Activity, override var listView: ListView) : ChatroomListActivityListener {
 
-
-
     private val firebaseAuth = FirebaseAuth.getInstance()
 
-
     override fun loadChatList() {
-
-
         val chatroomDatabase = ChatroomDatabase()
-        chatroomDatabase.loadChatroomList(
-            {list->
-                displayChatroomList(list)
-            },{s->
-                Log.d(TAG, s)
-            },{e->
-                Log.e(TAG, "チャットリストの取得に失敗しました", e)
-            })
-
-        //landlord.loadChatroomListInformation()
-
-
+        chatroomDatabase.loadChatroomList({list-> displayChatroomList(list) },{s-> Log.d(TAG, s) },{e-> Log.e(TAG, "チャットリストの取得に失敗しました", e) })
     }
 
     private fun displayChatroomList(chatRooms: ArrayList<Chatroom>){
@@ -53,7 +37,6 @@ class ChatroomListActivityController(override val activity: Activity, override v
             }else{
                 userNames[0]
             }
-
             val roomData = mutableMapOf("imageView" to R.drawable.ic_user,"roomName" to roomName, "doorMessagePlate" to room.document["doorMessagePlate"], "class" to room)
             roomList.add(roomData)
         }
@@ -81,21 +64,14 @@ class ChatroomListActivityController(override val activity: Activity, override v
         val intent = Intent(activity, ChatRoomActivity::class.java)
         intent.putExtra("chatRoom",chatroom)
         activity.startActivity(intent)
-
     }
 
     override fun logOut() {
-
         firebaseAuth.signOut()
         activity.finish()
     }
 
     override fun reload() {
-
         loadChatList()
     }
-
-
-
-
 }

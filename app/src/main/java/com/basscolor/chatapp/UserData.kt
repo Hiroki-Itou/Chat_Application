@@ -23,5 +23,4 @@ class UserData(val dec:Map<String, Any>) {
         }
           return uid
     }
-
 }

@@ -19,18 +19,11 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
     private var _password : String? = null
     private var _confirmationPass : String? = null
     private var loadingIndicator: LoadingIndicator = LoadingIndicator(activity)
-//
-//    init {
-//        cureateColleagues()
-//    }
-
 
     private fun getUri(): Uri {
 
-        val resId = R.drawable.icon
-
+        val resId = R.drawable.ic_user
         val resources = activity.resources
-
         val uri =  Uri.parse(
             ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + resources.getResourcePackageName(
                 resId
@@ -38,7 +31,6 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
                 resId
             )
         )
-
         return uri
     }
 
@@ -98,41 +90,7 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
                 Log.d(TAG,"サインイン中にエラーが発生しました$e")
                 loadingIndicator.stop()
             })
-
-
-        //signin.SigninToChat(_email!!,_password!!,_userName!!)
     }
-
-//    override fun cureateColleagues() {
-//        signin.setMediator(this)
-//        landlordList.setMediator(this)
-//
-//    }
-//
-//    override fun colleagueSuccess(colleague: Colleague) {
-//
-//        when (colleague) {
-//            signin -> {
-//
-//                val userData = preparationRegistration()
-//                landlordList.registration(userData)
-//            }
-//            landlordList ->{
-//                Log.d(TAG,"ユーザー登録が完了しました")
-//                loadingIndicator.stop()
-//                FirebaseAuth.getInstance().signOut()
-//                activity.finish()//Login画面へ
-//            }
-//            else -> Log.d(TAG, "")
-//        }
-//    }
-//    override fun colleagueFailure(colleague: Colleague) {
-//
-//    }
-//
-//    override fun colleagueError(colleague: Colleague) {
-//        Log.d(TAG,"collgueError")
-//    }
 
     private fun preparationRegistration(): UserData {
         val uid =  FirebaseAuth.getInstance().currentUser!!.uid
@@ -142,7 +100,6 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
             "email" to _email as String,
             "userID" to uid
         )
-
         return UserData(registData)
     }
 

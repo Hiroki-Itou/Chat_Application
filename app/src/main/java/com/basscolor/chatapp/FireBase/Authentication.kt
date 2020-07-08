@@ -10,7 +10,6 @@ class Authentication {
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    // signin("","",{s ->Log.d(TAG,l)},{failure ->Log.d(TAG, "サインイン中にエラーが発生しました$e")})
     @Synchronized
     fun signin(email:String,password:String,success:(String)->Unit ,failure:(Exception)->Unit ){
 

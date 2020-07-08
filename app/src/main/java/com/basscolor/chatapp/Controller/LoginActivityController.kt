@@ -25,13 +25,10 @@ class LoginActivityController(override val activity: Activity) :
         if (authentication.isLogin()){
             loadingIndicator.start()
             Log.d(TAG,"ログインしています")
-
             toActivity()
-
         }else{
             loadingIndicator.stop()
             Log.d(TAG,"ログインしていません")
-
         }
     }
 
@@ -52,7 +49,6 @@ class LoginActivityController(override val activity: Activity) :
         loadingIndicator.start()
 
         val authentication = Authentication()
-
         authentication.login(_email!!,_password!!,{s ->
             Log.d(TAG, s)
             loadingIndicator.stop()

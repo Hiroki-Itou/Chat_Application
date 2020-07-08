@@ -29,7 +29,6 @@ class UserDatabase {
 
     fun nameSearch(searchName:String,found:(UserData)->Unit,notFound:(String)->Unit,failure:(Exception)->Unit ){
 
-
         firestore.collection("users").whereEqualTo("name",searchName).get().addOnSuccessListener { result ->
 
             if(result.isEmpty){

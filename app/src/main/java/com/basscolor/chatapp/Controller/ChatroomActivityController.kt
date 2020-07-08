@@ -30,11 +30,8 @@ class ChatroomActivityController(override val activity: Activity, override val c
     private var count = 0
 
     init {
-
         messageDatabase = MessageDatabase()
-        messageDatabase.receiveMessage(chatroom.document) { snapshot ->
-            receive(snapshot)
-        }
+        messageDatabase.receiveMessage(chatroom.document) { snapshot -> receive(snapshot)}
         chatUserSetting()
         chatViewSetting()
     }
@@ -46,7 +43,6 @@ class ChatroomActivityController(override val activity: Activity, override val c
         val yourIcon = BitmapFactory.decodeResource(activity.resources,
             R.drawable.ic_user
         )
-
         val currentUser = FirebaseAuth.getInstance().currentUser!!
         val userNames = chatroom.document["userNames"] as ArrayList<String>
         if(userNames[0] == currentUser.displayName){
@@ -60,58 +56,26 @@ class ChatroomActivityController(override val activity: Activity, override val c
 
     private fun chatViewSetting(){
         chatView = activity.findViewById(R.id.message_view)
-        chatView.setRightBubbleColor(ContextCompat.getColor(activity,
-            R.color.colorPrimary
-        ))
-        chatView.setLeftBubbleColor(ContextCompat.getColor(activity,
-            R.color.gray200
-        ))
-        chatView.setBackgroundColor(ContextCompat.getColor(activity,
-            R.color.blueGray200
-        ))
-        chatView.setRightMessageTextColor(ContextCompat.getColor(activity,
-            R.color.messageText_black
-        ))
-        chatView.setLeftMessageTextColor(ContextCompat.getColor(activity,
-            R.color.messageText_black
-        ))
-        chatView.setSendTimeTextColor(ContextCompat.getColor(activity,
-            R.color.timeText_white
-        ))
+        chatView.setRightBubbleColor(ContextCompat.getColor(activity, R.color.colorPrimary))
+        chatView.setLeftBubbleColor(ContextCompat.getColor(activity, R.color.gray200))
+        chatView.setBackgroundColor(ContextCompat.getColor(activity, R.color.blueGray200))
+        chatView.setRightMessageTextColor(ContextCompat.getColor(activity, R.color.messageText_black))
+        chatView.setLeftMessageTextColor(ContextCompat.getColor(activity, R.color.messageText_black))
+        chatView.setSendTimeTextColor(ContextCompat.getColor(activity, R.color.timeText_white))
     }
 
-    override fun onInputMessage(message: String) {
-
-    }
+    override fun onInputMessage(message: String) {}
 
     override fun toSpeak(message: String) {
         if(message == "")return
-        messageDatabase.sendMessage(chatroom.document,message,
-            {s->
-                Log.e(TAG, s)
-
-            },{e->
-                Log.e(TAG, "メッセージの送信に失敗しました", e)
-            })
+        messageDatabase.sendMessage(chatroom.document,message, {s-> Log.e(TAG, s) },{e-> Log.e(TAG, "メッセージの送信に失敗しました", e) })
     }
 
     private fun receive(snapshots: QuerySnapshot) {
 
         if(count == 0){
-
             for (s in snapshots){
-
-                val sdf = SimpleDateFormat("MM-dd HH:mm")
-                val d = s["date"] as Timestamp
-                val timeStamp = sdf.format(d.toDate())
-                val userID = s["userID"] as String
-
-                if(userID == FirebaseAuth.getInstance().currentUser!!.uid){
-                    rightBalloonDisplay(s)
-                }else{
-                    leftBalloonDisplay(s)
-                }
-
+                createBalloon(snapshots)
             }
             count = snapshots.count()
             chatView.scrollToEnd()
@@ -119,53 +83,50 @@ class ChatroomActivityController(override val activity: Activity, override val c
         }
         if(count < snapshots.count()){
 
-            val snapshot =snapshots.documents[snapshots.count()-1]
-            val sdf = SimpleDateFormat("MM-dd HH:mm")
-            val d = snapshot["date"] as Timestamp
-            val timeStamp = sdf.format(d.toDate())
-            val userID = snapshot["userID"] as String
-
-            if(userID == FirebaseAuth.getInstance().currentUser!!.uid){
-                rightBalloonDisplay(snapshot)
-            }else{
-                leftBalloonDisplay(snapshot)
-            }
+            createBalloon(snapshots)
             count = snapshots.count()
         }
         chatView.scrollToEnd()
     }
 
+    private fun createBalloon(snapshots:QuerySnapshot){
+        val snapshot =snapshots.documents[snapshots.count()-1]
+        val sdf = SimpleDateFormat("MM-dd HH:mm")
+        val d = snapshot["date"] as Timestamp
+        val timeStamp = sdf.format(d.toDate())
+        val userID = snapshot["userID"] as String
+
+        if(userID == FirebaseAuth.getInstance().currentUser!!.uid){
+            rightBalloonDisplay(snapshot)
+        }else{
+            leftBalloonDisplay(snapshot)
+        }
+        count = snapshots.count()
+    }
+
     private fun rightBalloonDisplay(snapshot:DocumentSnapshot){
+
+        balloonDisplay(snapshot,me,true)
+    }
+
+    private fun leftBalloonDisplay(snapshot:DocumentSnapshot){
+
+      balloonDisplay(snapshot,you,false)
+    }
+    private fun balloonDisplay(snapshot:DocumentSnapshot,user:ChatUser,setRight:Boolean){
 
         val date = snapshot["date"] as Timestamp
         val calendar = Calendar.getInstance()
         calendar.time = date.toDate()
         val message = Message.Builder()
-            .setUser(me)
+            .setUser(user)
             .setUsernameVisibility(false)
-            .setRight(true)
-            .setText(snapshot["message"] as String)
-            .hideIcon(true)
-            .setSendTime(calendar)
-            .build()
-        chatView.setMessage(message)
-    }
-
-    private fun leftBalloonDisplay(snapshot:DocumentSnapshot){
-
-        val date = snapshot["date"] as Timestamp
-        val calendar = Calendar.getInstance()
-        calendar.time = date.toDate()
-
-        val receivedMessage = Message.Builder()
-            .setUser(you)
-            .setUsernameVisibility(false)
-            .setRight(false)
+            .setRight(setRight)
             .setText(snapshot["message"] as String)
             .hideIcon(false)
             .setSendTime(calendar)
             .build()
-        chatView.setMessage(receivedMessage)
+        chatView.setMessage(message)
     }
 
 }

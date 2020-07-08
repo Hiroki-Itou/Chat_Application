@@ -29,7 +29,6 @@ class UserSearchActivityController(override val activity: Activity) : UserSearch
                 activity.Friend_View.visibility = View.INVISIBLE
                 Log.d(TAG,"検索に失敗しました ",e)
             })
-        //searcher.nameSearch(userName)
     }
 
     override fun addRoom() {
@@ -44,11 +43,5 @@ class UserSearchActivityController(override val activity: Activity) : UserSearch
             },{e->
                 Log.d(TAG,"ルーム作成に失敗しました ",e)
             })
-
-        //roomBuilder.build(roomData)
-
     }
-
-
-
 }
