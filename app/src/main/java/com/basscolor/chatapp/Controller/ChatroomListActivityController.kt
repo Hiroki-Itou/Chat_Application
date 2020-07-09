@@ -7,7 +7,7 @@ import android.util.Log
 import android.widget.ListView
 import android.widget.SimpleAdapter
 import com.basscolor.chatapp.*
-import com.basscolor.chatapp.Activity.ChatRoomActivity
+import com.basscolor.chatapp.Activity.ChatroomActivity
 import com.basscolor.chatapp.Activity.UserSearchActivity
 import com.basscolor.chatapp.FireBase.ChatroomDatabase
 import com.basscolor.chatapp.Listener.ChatroomListActivityListener
@@ -61,7 +61,7 @@ class ChatroomListActivityController(override val activity: Activity, override v
 
         val chatroom = mutableMap["class"] as Chatroom
 
-        val intent = Intent(activity, ChatRoomActivity::class.java)
+        val intent = Intent(activity, ChatroomActivity::class.java)
         intent.putExtra("chatRoom",chatroom)
         activity.startActivity(intent)
     }

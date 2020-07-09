@@ -7,18 +7,38 @@
     android:layout_height="match_parent">
 
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout4"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/callButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_menu_call"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.github.bassaer.chatmessageview.view.MessageView
         android:id="@+id/message_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:message_max_width="230dp"
-        app:option_button_enable="false"
-        app:message_font_size="15dp"
-        app:time_label_font_size="10dp"
         app:layout_constraintBottom_toTopOf="@+id/editText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
+        app:message_font_size="15dp"
+        app:message_max_width="230dp"
+        app:option_button_enable="false"
+        app:time_label_font_size="10dp">
+
+    </com.github.bassaer.chatmessageview.view.MessageView>
 
     <EditText
         android:id="@+id/editText"

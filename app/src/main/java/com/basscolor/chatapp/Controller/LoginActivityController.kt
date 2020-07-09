@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
-import com.basscolor.chatapp.Activity.ChatRoomListActivity
+import com.basscolor.chatapp.Activity.ChatroomListActivity
 import com.basscolor.chatapp.Activity.SigninActivity
 import com.basscolor.chatapp.FireBase.Authentication
 import com.basscolor.chatapp.LoadingIndicator
@@ -59,7 +59,7 @@ class LoginActivityController(override val activity: Activity) :
     }
 
     private fun toActivity(){
-        val intent = Intent(activity, ChatRoomListActivity::class.java)
+        val intent = Intent(activity, ChatroomListActivity::class.java)
         activity.startActivity(intent)
     }
 
