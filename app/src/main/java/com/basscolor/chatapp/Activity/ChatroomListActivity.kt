@@ -2,6 +2,7 @@ package com.basscolor.chatapp.Activity
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ListView
 import com.basscolor.chatapp.Controller.ChatroomListActivityController
@@ -44,4 +45,9 @@ class ChatroomListActivity : Activity() {
         chatListController.reload()
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("Destroy",this.localClassName+"は破壊されました")
+    }
 }

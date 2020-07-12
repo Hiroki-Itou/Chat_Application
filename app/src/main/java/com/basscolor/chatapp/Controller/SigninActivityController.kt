@@ -6,9 +6,11 @@ import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
 import com.basscolor.chatapp.*
-import com.basscolor.chatapp.FireBase.Authentication
-import com.basscolor.chatapp.FireBase.UserDatabase
+import com.basscolor.chatapp.Deta.UserData
+import com.basscolor.chatapp.Model.FireBase.Authentication
+import com.basscolor.chatapp.Model.FireBase.UserDatabase
 import com.basscolor.chatapp.Listener.SigninActivityListener
+import com.basscolor.chatapp.Model.LoadingIndicator
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -18,7 +20,8 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
     private var _email : String? = null
     private var _password : String? = null
     private var _confirmationPass : String? = null
-    private var loadingIndicator: LoadingIndicator = LoadingIndicator(activity)
+    private var loadingIndicator: LoadingIndicator =
+        LoadingIndicator(activity)
 
     private fun getUri(): Uri {
 

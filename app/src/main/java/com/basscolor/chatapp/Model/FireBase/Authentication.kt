@@ -1,4 +1,4 @@
-package com.basscolor.chatapp.FireBase
+package com.basscolor.chatapp.Model.FireBase
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
@@ -52,6 +52,4 @@ class Authentication {
     fun isLogin():Boolean {
         return firebaseAuth.currentUser != null
     }
-
-
 }

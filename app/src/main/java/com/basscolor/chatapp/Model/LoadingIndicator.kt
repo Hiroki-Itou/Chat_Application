@@ -1,4 +1,4 @@
-package com.basscolor.chatapp
+package com.basscolor.chatapp.Model
 
 import android.app.Activity
 import android.view.View
@@ -14,7 +14,6 @@ class LoadingIndicator(val activity:Activity) {
     fun start(){
         progress(true)
     }
-
 
     fun stop(){
         progress(false)

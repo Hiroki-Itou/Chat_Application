@@ -1,7 +1,8 @@
-package com.basscolor.chatapp.FireBase
+package com.basscolor.chatapp.Model.FireBase
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.basscolor.chatapp.Deta.Chatroom
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,22 +14,22 @@ class MessageDatabase {
 
     private val firestore = FirebaseFirestore.getInstance()
 
-    fun sendMessage(document:Map<String, Any>,message:String,success:(String)->Unit ,failure:(Exception)->Unit ){
+    fun sendMessage(chatroom: Chatroom,message:String,success:(String)->Unit ,failure:(Exception)->Unit ){
 
         val currentUser = FirebaseAuth.getInstance().currentUser!!
 
         val message = hashMapOf("userID" to currentUser.uid ,"message" to message , "date" to Timestamp(Date()))
 
-        firestore.collection("chatrooms").document(document["roomID"] as String).collection("messages").document().set(message).addOnSuccessListener {
+        firestore.collection("chatrooms").document(chatroom.getRoomID()).collection("messages").document().set(message).addOnSuccessListener {
             success("メッセージを取得しました")
         }.addOnFailureListener { e->
             failure(e)
         }
     }
 
-    fun receiveMessage(document:Map<String, Any>,receive:(QuerySnapshot)->Unit){
+    fun receiveMessage(chatroom: Chatroom,receive:(QuerySnapshot)->Unit){
 
-        firestore.collection("chatrooms").document(document["roomID"] as String).collection("messages").orderBy("date", Query.Direction.ASCENDING)
+        firestore.collection("chatrooms").document(chatroom.getRoomID()).collection("messages").orderBy("date", Query.Direction.ASCENDING)
             .addSnapshotListener{values,e ->
 
                 if(values == null)return@addSnapshotListener
@@ -40,6 +41,4 @@ class MessageDatabase {
                 receive(values)
             }
     }
-
-
 }

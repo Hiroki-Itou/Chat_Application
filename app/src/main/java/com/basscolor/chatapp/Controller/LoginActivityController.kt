@@ -6,8 +6,8 @@ import android.content.Intent
 import android.util.Log
 import com.basscolor.chatapp.Activity.ChatroomListActivity
 import com.basscolor.chatapp.Activity.SigninActivity
-import com.basscolor.chatapp.FireBase.Authentication
-import com.basscolor.chatapp.LoadingIndicator
+import com.basscolor.chatapp.Model.FireBase.Authentication
+import com.basscolor.chatapp.Model.LoadingIndicator
 import com.basscolor.chatapp.Listener.LoginActivityListener
 
 
@@ -67,13 +67,4 @@ class LoginActivityController(override val activity: Activity) :
         Log.d(TAG,"ユーザー登録画面へ遷移")
         activity.startActivity(Intent(activity, SigninActivity::class.java))
     }
-
-
-
-
-
-
-
-
-
 }

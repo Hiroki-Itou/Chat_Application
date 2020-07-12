@@ -9,9 +9,11 @@ import android.widget.SimpleAdapter
 import com.basscolor.chatapp.*
 import com.basscolor.chatapp.Activity.ChatroomActivity
 import com.basscolor.chatapp.Activity.UserSearchActivity
-import com.basscolor.chatapp.FireBase.ChatroomDatabase
+import com.basscolor.chatapp.Deta.Chatroom
+import com.basscolor.chatapp.Model.FireBase.ChatroomDatabase
 import com.basscolor.chatapp.Listener.ChatroomListActivityListener
 import com.google.firebase.auth.FirebaseAuth
+import java.io.Serializable
 import kotlin.collections.ArrayList
 
 class ChatroomListActivityController(override val activity: Activity, override var listView: ListView) : ChatroomListActivityListener {
@@ -24,20 +26,10 @@ class ChatroomListActivityController(override val activity: Activity, override v
     }
 
     private fun displayChatroomList(chatRooms: ArrayList<Chatroom>){
-        val roomList: MutableList<MutableMap<String,Any?>> = mutableListOf()
-
-        val currentName = firebaseAuth.currentUser!!.displayName
+        val roomList: MutableList<MutableMap<String,Serializable>> = mutableListOf()
 
         chatRooms.forEach Loop@{room ->
-
-            val userNames = room.document["userNames"] as ArrayList<String>
-            val roomName :String
-            roomName = if(userNames[0] == currentName){
-                userNames[1]
-            }else{
-                userNames[0]
-            }
-            val roomData = mutableMapOf("imageView" to R.drawable.ic_user,"roomName" to roomName, "doorMessagePlate" to room.document["doorMessagePlate"], "class" to room)
+            val roomData = mutableMapOf("imageView" to R.drawable.ic_user,"roomName" to room.getPeerUserName(), "doorMessagePlate" to room.getDoorMessagePlate(), "class" to room)
             roomList.add(roomData)
         }
 
@@ -54,15 +46,13 @@ class ChatroomListActivityController(override val activity: Activity, override v
 
     override fun addChatlist() {
         activity.startActivity(Intent(activity, UserSearchActivity::class.java))
-
     }
 
     override fun selectChatRoom(mutableMap:MutableMap<String,Any>) {
 
         val chatroom = mutableMap["class"] as Chatroom
-
         val intent = Intent(activity, ChatroomActivity::class.java)
-        intent.putExtra("chatRoom",chatroom)
+        intent.putExtra("chatroom",chatroom)
         activity.startActivity(intent)
     }
 

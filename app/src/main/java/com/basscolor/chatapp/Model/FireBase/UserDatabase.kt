@@ -1,6 +1,6 @@
-package com.basscolor.chatapp.FireBase
+package com.basscolor.chatapp.Model.FireBase
 
-import com.basscolor.chatapp.UserData
+import com.basscolor.chatapp.Deta.UserData
 import com.google.firebase.firestore.FirebaseFirestore
 
 class UserDatabase {
@@ -8,7 +8,7 @@ class UserDatabase {
 
     private val firestore = FirebaseFirestore.getInstance()
 
-    fun registration(userData: UserData,success:(String)->Unit ,failure:(Exception)->Unit ){
+    fun registration(userData: UserData, success:(String)->Unit, failure:(Exception)->Unit ){
 
         val registData = hashMapOf(
             "name" to userData.getName(),
@@ -27,7 +27,7 @@ class UserDatabase {
             }
     }
 
-    fun nameSearch(searchName:String,found:(UserData)->Unit,notFound:(String)->Unit,failure:(Exception)->Unit ){
+    fun nameSearch(searchName:String, found:(UserData)->Unit, notFound:(String)->Unit, failure:(Exception)->Unit ){
 
         firestore.collection("users").whereEqualTo("name",searchName).get().addOnSuccessListener { result ->
 
@@ -38,7 +38,6 @@ class UserDatabase {
             for (doc in result) {
                 found(UserData(doc.data))
             }
-
         }.addOnFailureListener { e ->
             failure(e)
         }

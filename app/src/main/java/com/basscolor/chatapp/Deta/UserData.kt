@@ -1,4 +1,4 @@
-package com.basscolor.chatapp
+package com.basscolor.chatapp.Deta
 
 class UserData(val dec:Map<String, Any>) {
 

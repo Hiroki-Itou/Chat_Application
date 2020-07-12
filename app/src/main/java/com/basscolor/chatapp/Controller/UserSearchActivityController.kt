@@ -3,9 +3,9 @@ package com.basscolor.chatapp.Controller
 import android.app.Activity
 import android.util.Log
 import android.view.View
-import com.basscolor.chatapp.*
-import com.basscolor.chatapp.FireBase.ChatroomDatabase
-import com.basscolor.chatapp.FireBase.UserDatabase
+import com.basscolor.chatapp.Deta.UserData
+import com.basscolor.chatapp.Model.FireBase.ChatroomDatabase
+import com.basscolor.chatapp.Model.FireBase.UserDatabase
 import com.basscolor.chatapp.Listener.UserSearchActivityListener
 import kotlinx.android.synthetic.main.activity_friend_search.*
 

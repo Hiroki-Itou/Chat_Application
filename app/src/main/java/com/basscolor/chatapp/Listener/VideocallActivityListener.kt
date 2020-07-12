@@ -3,13 +3,15 @@ package com.basscolor.chatapp.Listener
 import android.app.Activity
 import com.basscolor.chatapp.Deta.Chatroom
 
-interface ChatroomActivityListener {
+interface VideocallActivityListener{
 
     val activity : Activity
     val chatroom : Chatroom
 
-    fun onInputMessage(message:String)
+    fun Call()
 
-    fun toSpeak(message:String)
+    fun HangUp()
+
+    fun VideoSetup()
 
 }

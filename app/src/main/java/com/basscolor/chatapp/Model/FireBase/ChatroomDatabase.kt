@@ -1,7 +1,7 @@
-package com.basscolor.chatapp.FireBase
+package com.basscolor.chatapp.Model.FireBase
 
-import com.basscolor.chatapp.Chatroom
-import com.basscolor.chatapp.UserData
+import com.basscolor.chatapp.Deta.Chatroom
+import com.basscolor.chatapp.Deta.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.Serializable
@@ -23,7 +23,7 @@ class ChatroomDatabase {
     fun loadChatroomList(found:(ArrayList<Chatroom>)->Unit, empty:(String)->Unit, failure:(Exception)->Unit ){
 
         val currentUser = FirebaseAuth.getInstance().currentUser
-        firestore.collection("chatrooms").whereArrayContains("listID",currentUser!!.uid).get().addOnSuccessListener {result ->
+        firestore.collection("chatrooms").whereArrayContains("userIDs",currentUser!!.uid).get().addOnSuccessListener {result ->
             val chatrooms = ArrayList<Chatroom>()
 
             if(result.isEmpty){
@@ -43,23 +43,26 @@ class ChatroomDatabase {
     }
 
     fun makeRoomData(userData: UserData):HashMap<String,Serializable>{
-        val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-        val randomString = (1..20)
-            .map { i -> kotlin.random.Random.nextInt(0, charPool.size) }
-            .map(charPool::get)
-            .joinToString("")
-
         val currentUser = FirebaseAuth.getInstance().currentUser
 
         val names = arrayListOf(userData.getName(),currentUser!!.displayName!!)
-        val listID = arrayListOf(currentUser.uid,userData.getUserID())
+        val userIDs = arrayListOf(currentUser.uid,userData.getUserID())
 
         val data = hashMapOf(
             "userNames" to names,
-            "listID" to listID,
-            "roomID" to randomString,
+            "userIDs" to userIDs,
+            "roomID" to randomString(),
             "doorMessagePlate" to ""
         )
         return data
+    }
+
+    private fun randomString():String{
+
+        val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+        return (1..20)
+            .map { kotlin.random.Random.nextInt(0, charPool.size) }
+            .map(charPool::get)
+            .joinToString("")
     }
 }

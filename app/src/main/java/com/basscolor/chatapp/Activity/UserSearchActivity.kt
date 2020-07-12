@@ -2,6 +2,7 @@ package com.basscolor.chatapp.Activity
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.SearchView
 import com.basscolor.chatapp.R
@@ -27,10 +28,8 @@ class UserSearchActivity : Activity() {
         searchView.setOnQueryTextListener(object:SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
 
-
                 return if(query != null){
                     friendSearchController.search(query)
-
                     true
                 }else{
                     false
@@ -38,12 +37,13 @@ class UserSearchActivity : Activity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
                 return true
-
             }
         })
+    }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("Destroy",this.localClassName+"は破壊されました")
     }
 }
