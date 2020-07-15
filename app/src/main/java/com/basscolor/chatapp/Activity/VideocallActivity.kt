@@ -2,6 +2,7 @@ package com.basscolor.chatapp.Activity
 
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import io.skyway.Peer.Browser.Canvas
 import android.os.Bundle
 import android.util.Log
@@ -23,10 +24,20 @@ class VideocallActivity :Activity(){
         val intent = getIntent()
         val chatroom = intent.getSerializableExtra("chatroom") as Chatroom
 
-        videocallActivityController = VideocallActivityController(this,chatroom)
+        videocallActivityController = VideocallActivityController(this,chatroom.getPeerUserID())
         val videoButton = findViewById<ImageButton>(R.id.videoButton)
         videoButton.setOnClickListener {
-            videocallActivityController.Call()
+            videocallActivityController.toCall()
+        }
+
+        val answerButton = findViewById<ImageButton>(R.id.answerButton)
+        answerButton.setOnClickListener {
+            videocallActivityController.toAnswer()
+        }
+
+        val refusalButton = findViewById<ImageButton>(R.id.refusalButton)
+        refusalButton.setOnClickListener {
+            videocallActivityController.toHangUp()
         }
     }
 
@@ -35,7 +46,7 @@ class VideocallActivity :Activity(){
         when (requestCode) {
             0 -> {
                 if (grantResults.count() > 0 && grantResults[0] === PackageManager.PERMISSION_GRANTED) {
-                    videocallActivityController.VideoSetup()
+                    videocallActivityController.toVideoSetup()
                 } else {
                     print("Error")
                 }
@@ -43,8 +54,19 @@ class VideocallActivity :Activity(){
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        volumeControlStream = AudioManager.STREAM_VOICE_CALL
+    }
+
+    override fun onPause() {
+        super.onPause()
+        volumeControlStream = AudioManager.USE_DEFAULT_STREAM_TYPE
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        videocallActivityController.todestroy()
         Log.d("Destroy",this.localClassName+"は破壊されました")
     }
 }
