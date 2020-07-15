@@ -32,11 +32,11 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
         val DOMAIN  = "com.basscolor.chatapp"
     }
 
-    private lateinit var peer:Peer
+    private var peer:Peer? = null
     private lateinit var currentPeerID : String
-    private lateinit var localStream:MediaStream
-    private lateinit var remoteStream:MediaStream
-    private lateinit var mediaConnection:MediaConnection
+    private var localStream:MediaStream? = null
+    private var remoteStream:MediaStream? = null
+    private var mediaConnection:MediaConnection? = null
 
     fun call(success:(String)->Unit,notFind:(String)->Unit,failure: (Exception) -> Unit){
         getPeerIDs({list->
@@ -44,7 +44,7 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
                 val ids = peerUserID
                 if(id == ids){
 
-                    mediaConnection = peer.call(id, localStream)
+                    mediaConnection = peer?.call(id, localStream)
                     setupMediaCallBack()
                     success("接続を開始します")
                     return@getPeerIDs
@@ -57,7 +57,7 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
     }
 
     fun setReceiver(receive:(String)->Unit){
-        peer.on(Peer.PeerEventEnum.CALL) { p0 ->
+        peer?.on(Peer.PeerEventEnum.CALL) { p0 ->
             (p0 as? MediaConnection)?.let{it->
                 mediaConnection = it
                 receive("電話を受信しました")
@@ -67,21 +67,70 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
 
     fun answer(){
         setupMediaCallBack()
-        mediaConnection.answer(localStream)//相手に映像を送信
+        mediaConnection?.answer(localStream)//相手に映像を送信
     }
 
     fun hangUp(delegate:()->Unit){
-        mediaConnection.close()
+        closeRemoteStream()
+        mediaConnection?.close()
         delegate()
     }
 
-    fun destroy() {
-        localStream.removeVideoRenderer(localStreamView,0)
-        localStream.close()
-        remoteStream.removeVideoRenderer(remoteStreamView,0)
-        remoteStream.close()
-        if(mediaConnection.isOpen)mediaConnection.close()
+    fun destroy(){
+        destroyPeer()
     }
+
+    private fun destroyPeer() {
+        closeRemoteStream()
+
+        if(localStream != null){
+            localStream!!.removeVideoRenderer(remoteStreamView,0)
+            localStream!!.close()
+        }
+
+        if(mediaConnection != null){
+            if (mediaConnection!!.isOpen){
+                mediaConnection!!.close()
+            }
+            unsetMediaCallbacks()
+        }
+        Navigator.terminate()
+        if(peer != null){
+            unsetPeerCallback(peer!!)
+            if(!peer!!.isDisconnected){
+                peer!!.disconnect()
+            }
+            if(!peer!!.isDestroyed){
+                peer!!.destroy()
+            }
+            peer = null
+        }
+    }
+
+    fun unsetPeerCallback(peer: Peer) {
+
+        peer.on(Peer.PeerEventEnum.OPEN, null)
+        peer.on(Peer.PeerEventEnum.CONNECTION, null)
+        peer.on(Peer.PeerEventEnum.CALL, null)
+        peer.on(Peer.PeerEventEnum.CLOSE, null)
+        peer.on(Peer.PeerEventEnum.DISCONNECTED, null)
+        peer.on(Peer.PeerEventEnum.ERROR, null)
+    }
+    private fun unsetMediaCallbacks(){
+        if(mediaConnection == null)return
+
+        mediaConnection!!.on(MediaConnection.MediaEventEnum.STREAM, null)
+        mediaConnection!!.on(MediaConnection.MediaEventEnum.CLOSE, null)
+        mediaConnection!!.on(MediaConnection.MediaEventEnum.ERROR, null)
+    }
+
+    private fun closeRemoteStream(){
+        if(remoteStream == null)return
+
+        remoteStream!!.removeVideoRenderer(remoteStreamView,0)
+        remoteStream!!.close()
+    }
+
 
     fun checkPermission(){
         if (ContextCompat.checkSelfPermission(activity,
@@ -104,29 +153,30 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
 
     private fun setupPeerCallBack(){
 
-        peer.on(Peer.PeerEventEnum.OPEN) { p0 ->//自分の画面を出す
+        peer?.on(Peer.PeerEventEnum.OPEN) { p0 ->//自分の画面を出す
             (p0 as? String)?.let{ it ->
                 Log.d("debug", "peerID: $it")
                 currentPeerID = it
                 startLocalStream()
             }
         }
-        peer.on(Peer.PeerEventEnum.ERROR
+        peer?.on(Peer.PeerEventEnum.ERROR
         ) { p0 -> Log.d("debug", "peer error $p0") }
 
-        peer.on(Peer.PeerEventEnum.CLOSE){p0->
+        peer?.on(Peer.PeerEventEnum.CLOSE){p0->
             (p0 as? MediaConnection)?.let{
-                mediaConnection.close()
+                closeRemoteStream()
+                //mediaConnection?.close()
             }
         }
 
     }
 
     private fun setupMediaCallBack(){//相手の映像を表示
-        mediaConnection.on(MediaConnection.MediaEventEnum.STREAM) { p0 ->
+        mediaConnection?.on(MediaConnection.MediaEventEnum.STREAM) { p0 ->
             (p0 as? MediaStream)?.let{it->
                 remoteStream = it
-                remoteStream.addVideoRenderer(remoteStreamView, 0)
+                remoteStream!!.addVideoRenderer(remoteStreamView, 0)
                 Log.d("debug", "相手の映像を受信しました")
             }
         }
@@ -139,14 +189,14 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
         constraints.cameraPosition = MediaConstraints.CameraPositionEnum.FRONT
         Navigator.initialize(peer)
         localStream = Navigator.getUserMedia(constraints)
-        localStream.addVideoRenderer(localStreamView, 0)
+        localStream!!.addVideoRenderer(localStreamView, 0)
     }
 
 
 
     private fun getPeerIDs(found:(ArrayList<String>)->Unit,failure:(Exception)->Unit){
 
-        peer.listAllPeers {p->
+        peer?.listAllPeers {p->
 
             if (p !is JSONArray) {
                 failure(NullPointerException())
