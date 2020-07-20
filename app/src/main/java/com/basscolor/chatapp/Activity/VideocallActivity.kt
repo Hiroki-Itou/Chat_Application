@@ -11,6 +11,7 @@ import android.widget.ImageButton
 import com.basscolor.chatapp.Controller.VideocallActivityController
 import com.basscolor.chatapp.Deta.Chatroom
 import com.basscolor.chatapp.Listener.VideocallActivityListener
+import com.basscolor.chatapp.Model.CallData
 
 class VideocallActivity :Activity(){
 
@@ -21,36 +22,14 @@ class VideocallActivity :Activity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_videocall)
 
-        val intent = getIntent()
-        val chatroom = intent.getSerializableExtra("chatroom") as Chatroom
+        val intent = intent
+        val callData = intent.getSerializableExtra("callData") as CallData
 
-        videocallActivityController = VideocallActivityController(this,chatroom.getPeerUserID())
-        val videoButton = findViewById<ImageButton>(R.id.videoButton)
-        videoButton.setOnClickListener {
-            videocallActivityController.toCall()
-        }
+        videocallActivityController = VideocallActivityController(this,callData)
 
-        val answerButton = findViewById<ImageButton>(R.id.answerButton)
-        answerButton.setOnClickListener {
-            videocallActivityController.toAnswer()
-        }
-
-        val refusalButton = findViewById<ImageButton>(R.id.refusalButton)
-        refusalButton.setOnClickListener {
+        val hangUpButton = findViewById<ImageButton>(R.id.hangUpButton)
+        hangUpButton.setOnClickListener {
             videocallActivityController.toHangUp()
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            0 -> {
-                if (grantResults.count() > 0 && grantResults[0] === PackageManager.PERMISSION_GRANTED) {
-                    videocallActivityController.toVideoSetup()
-                } else {
-                    print("Error")
-                }
-            }
         }
     }
 
@@ -66,7 +45,6 @@ class VideocallActivity :Activity(){
 
     override fun onDestroy() {
         super.onDestroy()
-        videocallActivityController.todestroy()
         Log.d("Destroy",this.localClassName+"は破壊されました")
     }
 }

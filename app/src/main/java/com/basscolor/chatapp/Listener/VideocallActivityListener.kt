@@ -1,20 +1,13 @@
 package com.basscolor.chatapp.Listener
 
 import android.app.Activity
+import com.basscolor.chatapp.Model.CallData
 
 interface VideocallActivityListener{
 
     val activity : Activity
-    val peerUserID : String
-
-    fun toCall()
+    val callData : CallData
 
     fun toHangUp()
-
-    fun toAnswer()
-
-    fun toVideoSetup()
-
-    fun todestroy()
 
 }

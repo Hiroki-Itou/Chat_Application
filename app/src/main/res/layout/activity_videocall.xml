@@ -36,52 +36,15 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
-            android:id="@+id/videoButton"
+            android:id="@+id/hangUpButton"
             android:layout_width="42dp"
             android:layout_height="41dp"
-            android:background="@android:drawable/presence_video_online"
+            android:background="@android:drawable/sym_call_missed"
+            android:backgroundTint="#E91E63"
             android:translationZ="3dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/CallCatchView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#F26F6F6F"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/remoteStreamView"
-        app:layout_constraintVertical_bias="0.92">
-
-        <ImageButton
-            android:id="@+id/answerButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="100dp"
-            android:background="@android:drawable/stat_sys_phone_call"
-            android:backgroundTint="#49D51B"
-            android:translationZ="2dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/refusalButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="100dp"
-            android:background="@android:drawable/sym_call_missed"
-            android:backgroundTint="@color/colorAccent"
-            android:translationZ="2dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

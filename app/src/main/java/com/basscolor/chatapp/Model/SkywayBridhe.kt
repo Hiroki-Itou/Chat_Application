@@ -1,36 +1,19 @@
 package com.basscolor.chatapp.Model
 
-
-import android.Manifest
 import android.app.Activity
 import android.content.ContentValues.TAG
-import android.content.pm.PackageManager
 import android.util.Log
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.basscolor.chatapp.Deta.Chatroom
-import com.google.firebase.auth.FirebaseAuth
 import io.skyway.Peer.Browser.Canvas
 import io.skyway.Peer.Browser.MediaConstraints
 import io.skyway.Peer.Browser.MediaStream
 import io.skyway.Peer.Browser.Navigator
-import io.skyway.Peer.CallOption
 import io.skyway.Peer.MediaConnection
 import io.skyway.Peer.Peer
-import io.skyway.Peer.PeerOption
 import org.json.JSONArray
 import java.lang.NullPointerException
 
 
-
-
-class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remoteStreamView:Canvas, val peerUserID: String ){
-
-    companion object {
-        val API_KEY = "920114e2-7d0f-4dc9-bc37-421e04b651fb"
-        val DOMAIN  = "com.basscolor.chatapp"
-    }
+class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remoteStreamView:Canvas, val callData: CallData ){
 
     private var peer:Peer? = null
     private lateinit var currentPeerID : String
@@ -38,140 +21,47 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
     private var remoteStream:MediaStream? = null
     private var mediaConnection:MediaConnection? = null
 
-    fun call(success:(String)->Unit,notFind:(String)->Unit,failure: (Exception) -> Unit){
+    init {
+        peer = callData.peer
+        setupPeerCallBack()
+        startLocalStream()
+        if(callData.mediaConnection == null){
+            call()
+        }else{
+            mediaConnection = callData.mediaConnection
+            setupMediaCallBack()
+            mediaConnection?.answer(localStream)//相手に映像を送信
+        }
+    }
+
+
+    private fun call(){
         getPeerIDs({list->
             for(id in list){
-                val ids = peerUserID
-                if(id == ids){
-
-                    mediaConnection = peer?.call(id, localStream)
+                if(id == callData.peerUserID){
+                    mediaConnection = peer?.call(id, localStream)//相手に映像を送信
                     setupMediaCallBack()
-                    success("接続を開始します")
+                    Log.d(TAG,"接続を開始します")
                     return@getPeerIDs
                 }
             }
-            notFind("接続先が見つかりませんでした")
+            Log.d(TAG,"接続先が見つかりませんでした")
         },{e->
-            failure(e)
+            Log.e(TAG,"$this でエラーが発生: $e")
         })
     }
-
-    fun setReceiver(receive:(String)->Unit){
-        peer?.on(Peer.PeerEventEnum.CALL) { p0 ->
-            (p0 as? MediaConnection)?.let{it->
-                mediaConnection = it
-                receive("電話を受信しました")
-            }
-        }
-    }
-
-    fun answer(){
-        setupMediaCallBack()
-        mediaConnection?.answer(localStream)//相手に映像を送信
-    }
-
-    fun hangUp(delegate:()->Unit){
-        closeRemoteStream()
-        mediaConnection?.close()
-        delegate()
-    }
-
     fun destroy(){
-        destroyPeer()
-    }
-
-    private fun destroyPeer() {
-        closeRemoteStream()
-
-        if(localStream != null){
-            localStream!!.removeVideoRenderer(remoteStreamView,0)
-            localStream!!.close()
-        }
-
-        if(mediaConnection != null){
-            if (mediaConnection!!.isOpen){
-                mediaConnection!!.close()
-            }
-            unsetMediaCallbacks()
-        }
-        Navigator.terminate()
-        if(peer != null){
-            unsetPeerCallback(peer!!)
-            if(!peer!!.isDisconnected){
-                peer!!.disconnect()
-            }
-            if(!peer!!.isDestroyed){
-                peer!!.destroy()
-            }
-            peer = null
-        }
-    }
-
-    fun unsetPeerCallback(peer: Peer) {
-
-        peer.on(Peer.PeerEventEnum.OPEN, null)
-        peer.on(Peer.PeerEventEnum.CONNECTION, null)
-        peer.on(Peer.PeerEventEnum.CALL, null)
-        peer.on(Peer.PeerEventEnum.CLOSE, null)
-        peer.on(Peer.PeerEventEnum.DISCONNECTED, null)
-        peer.on(Peer.PeerEventEnum.ERROR, null)
-    }
-    private fun unsetMediaCallbacks(){
-        if(mediaConnection == null)return
-
-        mediaConnection!!.on(MediaConnection.MediaEventEnum.STREAM, null)
-        mediaConnection!!.on(MediaConnection.MediaEventEnum.CLOSE, null)
-        mediaConnection!!.on(MediaConnection.MediaEventEnum.ERROR, null)
-    }
-
-    private fun closeRemoteStream(){
-        if(remoteStream == null)return
-
-        remoteStream!!.removeVideoRenderer(remoteStreamView,0)
-        remoteStream!!.close()
-    }
-
-
-    fun checkPermission(){
-        if (ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.CAMERA) !== PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.RECORD_AUDIO) !== PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, arrayOf<String>(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO), 0)
-        } else {
-            this.setupPeer()
-        }
-    }
-
-    fun setupPeer(){//パーミッションの許可が得られた後に行う初期設定
-        val option = PeerOption()
-        option.key = API_KEY
-        option.domain = DOMAIN
-        option.debug = Peer.DebugLevelEnum.ALL_LOGS
-        peer = Peer(activity,FirebaseAuth.getInstance().currentUser!!.uid, option)
-        setupPeerCallBack()
+        destroyStream()
     }
 
     private fun setupPeerCallBack(){
 
-        peer?.on(Peer.PeerEventEnum.OPEN) { p0 ->//自分の画面を出す
-            (p0 as? String)?.let{ it ->
-                Log.d("debug", "peerID: $it")
-                currentPeerID = it
-                startLocalStream()
-            }
-        }
-        peer?.on(Peer.PeerEventEnum.ERROR
-        ) { p0 -> Log.d("debug", "peer error $p0") }
-
         peer?.on(Peer.PeerEventEnum.CLOSE){p0->
             (p0 as? MediaConnection)?.let{
-                closeRemoteStream()
-                //mediaConnection?.close()
+                activity.finish()
             }
         }
-
     }
-
     private fun setupMediaCallBack(){//相手の映像を表示
         mediaConnection?.on(MediaConnection.MediaEventEnum.STREAM) { p0 ->
             (p0 as? MediaStream)?.let{it->
@@ -192,8 +82,6 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
         localStream!!.addVideoRenderer(localStreamView, 0)
     }
 
-
-
     private fun getPeerIDs(found:(ArrayList<String>)->Unit,failure:(Exception)->Unit){
 
         peer?.listAllPeers {p->
@@ -202,7 +90,6 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
                 failure(NullPointerException())
                 return@listAllPeers
             }
-
             val listPeerIds = arrayListOf<String>()
             var peerId: String
 
@@ -220,9 +107,37 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
             found(listPeerIds)
         }
     }
+//--------------------------destroy-------------------------//
 
+    private fun destroyStream() {
+        closeRemoteStream()
+        closeLocalStream()
+        if(callData.mediaConnection != null){
+            if (callData.mediaConnection!!.isOpen){
+                callData.mediaConnection!!.close()
+            }
+            unsetMediaCallbacks(callData.mediaConnection!!)
+            callData.mediaConnection = null
+        }
+    }
 
+    private fun closeLocalStream(){
+        if(localStream == null)return
+        localStream!!.removeVideoRenderer(remoteStreamView,0)
+        localStream!!.close()
+    }
 
+    private fun closeRemoteStream(){
+        if(remoteStream == null)return
+        remoteStream!!.removeVideoRenderer(remoteStreamView,0)
+        remoteStream!!.close()
+    }
 
+    private fun unsetMediaCallbacks(mediaConnection: MediaConnection){
+
+        mediaConnection.on(MediaConnection.MediaEventEnum.STREAM, null)
+        mediaConnection.on(MediaConnection.MediaEventEnum.CLOSE, null)
+        mediaConnection.on(MediaConnection.MediaEventEnum.ERROR, null)
+    }
 
 }

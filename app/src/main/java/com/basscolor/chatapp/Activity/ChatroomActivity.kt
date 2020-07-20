@@ -2,6 +2,7 @@ package com.basscolor.chatapp.Activity
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
@@ -28,12 +29,19 @@ class ChatroomActivity:Activity() {
         val callButton = findViewById<ImageButton>(R.id.callButton)
         val editText = findViewById<EditText>(R.id.editText)
         val sendButton = findViewById<ImageButton>(R.id.sendButton)
+        val replyButton = findViewById<ImageButton>(R.id.replyButton)
+        val rejectButton = findViewById<ImageButton>(R.id.rejectButton)
+
+        replyButton.setOnClickListener {
+            chatRoomActivityListener.transition()
+        }
+
+        rejectButton.setOnClickListener {
+            chatRoomActivityListener.toReject()
+        }
 
         callButton.setOnClickListener {
-
-            val intent = Intent(this, VideocallActivity::class.java)
-            intent.putExtra("chatroom",chatroom)
-            this.startActivity(intent)
+          chatRoomActivityListener.toCall()
         }
 
         sendButton.setOnClickListener {
@@ -47,6 +55,20 @@ class ChatroomActivity:Activity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        chatRoomActivityListener.toDestroy()
         Log.d("Destroy",this.localClassName+"は破壊されました")
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            0 -> {
+                if (grantResults.count() > 0 && grantResults[0] === PackageManager.PERMISSION_GRANTED) {
+                    chatRoomActivityListener.setupPeer()
+                } else {
+                    Log.d("Permission","パーミッションエラーが発生しました")
+                }
+            }
+        }
     }
 }

@@ -12,4 +12,15 @@ interface ChatroomActivityListener {
 
     fun toSpeak(message:String)
 
+    fun toCall()
+
+    fun toReject()
+
+    fun toDestroy()
+
+    fun setupPeer()
+
+    fun transition()
+
+
 }
