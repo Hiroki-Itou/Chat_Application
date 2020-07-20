@@ -25,14 +25,10 @@ import io.skyway.Peer.PeerOption
 
 class ChatroomActivityController(override val activity: Activity, override val chatroom: Chatroom) : ChatroomActivityListener {
 
-    companion object {
-        val API_KEY = "920114e2-7d0f-4dc9-bc37-421e04b651fb"
-        val DOMAIN  = "com.basscolor.chatapp"
-    }
+
 
     private var chatView: CustomMessageView
     private var messageDatabase:MessageDatabase = MessageDatabase()
-    private val callData = CallData()
     private val incomingView : ConstraintLayout
 
     private var count = 0
@@ -53,11 +49,11 @@ class ChatroomActivityController(override val activity: Activity, override val c
 
     override fun toSpeak(message: String) {
         if(message == "")return
-        messageDatabase.sendMessage(chatroom,message, {s-> Log.e(TAG, s) },{e-> Log.e(TAG, "メッセージの送信に失敗しました", e) })
+        messageDatabase.sendMessage(chatroom,message, {s-> Log.d(TAG, s) },{e-> Log.e(TAG, "メッセージの送信に失敗しました", e) })
     }
 
     override fun toCall() {
-        callData.peerUserID = chatroom.getPeerUserID()
+        CallData.peerUserID = chatroom.getPeerUserID()
         transition()
     }
 
@@ -95,37 +91,37 @@ class ChatroomActivityController(override val activity: Activity, override val c
 
     override fun setupPeer(){//パーミッションの許可が得られた後に行う初期設定
         val option = PeerOption()
-        option.key = API_KEY
-        option.domain = DOMAIN
+        option.key = CallData.API_KEY
+        option.domain = CallData.DOMAIN
         option.debug = Peer.DebugLevelEnum.ALL_LOGS
-        callData.peer = Peer(activity, FirebaseAuth.getInstance().currentUser!!.uid, option)
+        CallData.peer = Peer(activity, FirebaseAuth.getInstance().currentUser!!.uid, option)
         connectServer()
         setIncoming()
     }
 
     private fun connectServer(){
 
-        callData.peer?.on(Peer.PeerEventEnum.OPEN) { p0 ->
+        CallData.peer?.on(Peer.PeerEventEnum.OPEN) { p0 ->
             (p0 as? String)?.let{ it ->
                 Log.d(TAG, "サーバに接続しました: $it")
             }
         }
-        callData.peer?.on(Peer.PeerEventEnum.ERROR
+        CallData.peer?.on(Peer.PeerEventEnum.ERROR
         ) { p0 -> Log.d(TAG, "サーバ接続中にエラーが発生しました: $p0") }
     }
 
     private fun setIncoming(){//着信があった時の処理設定
-        callData.peer?.on(Peer.PeerEventEnum.CALL) { p0 ->
+        CallData.peer?.on(Peer.PeerEventEnum.CALL) { p0 ->
             (p0 as? MediaConnection)?.let{it->
-                callData.mediaConnection = it
+                CallData.mediaConnection = it
                 incomingView.visibility = View.VISIBLE
             }
         }
     }
 
     override fun transition(){
+        incomingView.visibility = View.INVISIBLE
         val intent = Intent(activity, VideocallActivity::class.java)
-        intent.putExtra("callData",callData)
         activity.startActivity(intent)
     }
 
@@ -133,14 +129,14 @@ class ChatroomActivityController(override val activity: Activity, override val c
 
     override fun toDestroy(){
 
-        if(callData.peer != null){
-            if(!callData.peer!!.isDisconnected){
-                callData.peer!!.disconnect()
+        if(CallData.peer != null){
+            if(!CallData.peer!!.isDisconnected){
+                CallData.peer!!.disconnect()
             }
-            if(!callData.peer!!.isDestroyed){
-                callData.peer!!.destroy()
+            if(!CallData.peer!!.isDestroyed){
+                CallData.peer!!.destroy()
             }
-            unsetPeerCallback(callData.peer!!)
+            unsetPeerCallback(CallData.peer!!)
         }
     }
 

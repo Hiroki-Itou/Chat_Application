@@ -22,10 +22,7 @@ class VideocallActivity :Activity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_videocall)
 
-        val intent = intent
-        val callData = intent.getSerializableExtra("callData") as CallData
-
-        videocallActivityController = VideocallActivityController(this,callData)
+        videocallActivityController = VideocallActivityController(this)
 
         val hangUpButton = findViewById<ImageButton>(R.id.hangUpButton)
         hangUpButton.setOnClickListener {
@@ -46,5 +43,10 @@ class VideocallActivity :Activity(){
     override fun onDestroy() {
         super.onDestroy()
         Log.d("Destroy",this.localClassName+"は破壊されました")
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        videocallActivityController.toHangUp()
     }
 }

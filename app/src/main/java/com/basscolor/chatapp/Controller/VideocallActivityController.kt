@@ -11,7 +11,7 @@ import com.basscolor.chatapp.Model.SkywayBridhe
 import com.basscolor.chatapp.R
 import io.skyway.Peer.Browser.Canvas
 
-class VideocallActivityController(override val activity: Activity, override val callData: CallData) :VideocallActivityListener{
+class VideocallActivityController(override val activity: Activity) :VideocallActivityListener{
 
     private val skywayBridhe: SkywayBridhe
 
@@ -19,7 +19,7 @@ class VideocallActivityController(override val activity: Activity, override val 
         val localStreamView =  activity.findViewById<Canvas>(R.id.localStreamView)
         localStreamView.setZOrderOnTop(true)
         val remoteStreamView = activity.findViewById<Canvas>(R.id.remoteStreamView)
-        skywayBridhe = SkywayBridhe(activity, localStreamView, remoteStreamView,callData)
+        skywayBridhe = SkywayBridhe(activity, localStreamView, remoteStreamView)
     }
 
     override fun toHangUp() {

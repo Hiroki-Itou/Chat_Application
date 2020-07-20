@@ -83,15 +83,15 @@ class CustomMessageView (view: MessageView,val activity:Activity,val chatroom: C
 
     private fun rightBalloonDisplay(snapshot: DocumentSnapshot){
 
-        balloonDisplay(snapshot,me,true)
+        balloonDisplay(snapshot,me,true, hideIcon = true)
     }
 
     private fun leftBalloonDisplay(snapshot:DocumentSnapshot){
 
-        balloonDisplay(snapshot,you,false)
+        balloonDisplay(snapshot,you, setRight = false, hideIcon = false)
     }
 
-    private fun balloonDisplay(snapshot:DocumentSnapshot,user:ChatUser,setRight:Boolean){
+    private fun balloonDisplay(snapshot:DocumentSnapshot,user:ChatUser,setRight:Boolean,hideIcon:Boolean){
 
         val date = snapshot["date"] as Timestamp
         val calendar = Calendar.getInstance()
@@ -101,7 +101,7 @@ class CustomMessageView (view: MessageView,val activity:Activity,val chatroom: C
             .setUsernameVisibility(false)
             .setRight(setRight)
             .setText(snapshot["message"] as String)
-            .hideIcon(false)
+            .hideIcon(hideIcon)
             .setSendTime(calendar)
             .build()
         messageView.setMessage(message)

@@ -23,7 +23,7 @@ class Chatroom (val document:Map<String, Any>):Serializable{
     }
     fun getPeerUserName():String{
         val userNames = document["userNames"] as ArrayList<*>
-        return if(FirebaseAuth.getInstance().currentUser!!.uid == userNames[0]){
+        return if(FirebaseAuth.getInstance().currentUser!!.displayName == userNames[0]){
             userNames[1] as String
         }else{
             userNames[0] as String
