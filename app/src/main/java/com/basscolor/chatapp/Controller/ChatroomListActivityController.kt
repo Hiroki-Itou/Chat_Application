@@ -31,7 +31,7 @@ class ChatroomListActivityController(override val activity: Activity, override v
         val roomList: MutableList<MutableMap<String,Serializable>> = mutableListOf()
 
         chatRooms.forEach Loop@{room ->
-            val roomData = mutableMapOf("imageView" to R.drawable.ic_user,"roomName" to room.getPeerUserName(), "doorMessagePlate" to room.getDoorMessagePlate(), "class" to room)
+            val roomData = mutableMapOf("imageView" to R.mipmap.ic_user,"roomName" to room.getPeerUserName(), "doorMessagePlate" to room.getDoorMessagePlate(), "class" to room)
             roomList.add(roomData)
         }
 

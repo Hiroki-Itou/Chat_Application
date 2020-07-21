@@ -19,6 +19,7 @@ class VideocallActivityController(override val activity: Activity) :VideocallAct
         val localStreamView =  activity.findViewById<Canvas>(R.id.localStreamView)
         localStreamView.setZOrderOnTop(true)
         val remoteStreamView = activity.findViewById<Canvas>(R.id.remoteStreamView)
+        localStreamView.setZOrderOnTop(false)
         skywayBridhe = SkywayBridhe(activity, localStreamView, remoteStreamView)
     }
 

@@ -9,8 +9,8 @@
     <view
         android:id="@+id/remoteStreamView"
         class="io.skyway.Peer.Browser.Canvas"
-        android:layout_width="161dp"
-        android:layout_height="294dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.936"
@@ -23,7 +23,9 @@
         class="io.skyway.Peer.Browser.Canvas"
         android:layout_width="128dp"
         android:layout_height="180dp"
-        android:translationZ="2dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/view_frame"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,11 +39,10 @@
 
         <ImageButton
             android:id="@+id/hangUpButton"
-            android:layout_width="42dp"
-            android:layout_height="41dp"
-            android:background="@android:drawable/sym_call_missed"
-            android:backgroundTint="#E91E63"
-            android:translationZ="3dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="8dp"
+            android:background="@mipmap/ic_hangup"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

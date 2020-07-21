@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.media.RingtoneManager
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -39,6 +40,8 @@ class ChatroomActivityController(override val activity: Activity, override val c
     init {
         messageDatabase.receiveMessage(chatroom) { snapshot -> receive(snapshot)}
         incomingView = activity.findViewById(R.id.IncomingView)
+        val nameView = activity.findViewById<TextView>(R.id.nameView)
+        nameView.text = chatroom.getPeerUserName()
 
         chatView = CustomMessageView(
             activity.findViewById(R.id.message_view),
