@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.RingtoneManager
 import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -30,6 +31,8 @@ class ChatroomActivityController(override val activity: Activity, override val c
     private var chatView: CustomMessageView
     private var messageDatabase:MessageDatabase = MessageDatabase()
     private val incomingView : ConstraintLayout
+    private val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+    private val ringtone = RingtoneManager.getRingtone(activity, uri)
 
     private var count = 0
 
@@ -58,6 +61,11 @@ class ChatroomActivityController(override val activity: Activity, override val c
     }
 
     override fun toReject() {
+        if (CallData.mediaConnection!!.isOpen){
+            CallData.mediaConnection!!.close()
+        }
+        CallData.mediaConnection = null
+        ringtone.stop()
         incomingView.visibility = View.INVISIBLE
     }
 
@@ -114,12 +122,14 @@ class ChatroomActivityController(override val activity: Activity, override val c
         CallData.peer?.on(Peer.PeerEventEnum.CALL) { p0 ->
             (p0 as? MediaConnection)?.let{it->
                 CallData.mediaConnection = it
+                ringtone.play()
                 incomingView.visibility = View.VISIBLE
             }
         }
     }
 
     override fun transition(){
+        ringtone.stop()
         incomingView.visibility = View.INVISIBLE
         val intent = Intent(activity, VideocallActivity::class.java)
         activity.startActivity(intent)
@@ -137,6 +147,7 @@ class ChatroomActivityController(override val activity: Activity, override val c
                 CallData.peer!!.destroy()
             }
             unsetPeerCallback(CallData.peer!!)
+            CallData.peer = null
         }
     }
 

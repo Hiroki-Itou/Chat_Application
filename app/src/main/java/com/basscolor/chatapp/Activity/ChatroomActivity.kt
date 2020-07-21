@@ -20,7 +20,7 @@ class ChatroomActivity:Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chatroom)
 
-        val intent = getIntent()
+        val intent = intent
         val chatroom = intent.getSerializableExtra("chatroom") as Chatroom
 
         chatRoomActivityListener =

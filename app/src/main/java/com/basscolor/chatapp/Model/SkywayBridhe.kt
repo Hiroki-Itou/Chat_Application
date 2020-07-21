@@ -82,6 +82,16 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
                 Log.d("debug", "相手の映像を受信しました")
             }
         }
+        mediaConnection?.on(MediaConnection.MediaEventEnum.CLOSE){
+            destroy()
+            activity.finish() }
+        mediaConnection?.on(MediaConnection.MediaEventEnum.REMOVE_STREAM){
+            destroy()
+            activity.finish()}
+        mediaConnection?.on(MediaConnection.MediaEventEnum.ERROR){
+            destroy()
+            activity.finish()
+        }
     }
 
     private fun startLocalStream(){//自分の映像を表示
@@ -150,6 +160,7 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
 
     private fun unsetMediaCallbacks(mediaConnection: MediaConnection){
 
+        mediaConnection.on(MediaConnection.MediaEventEnum.REMOVE_STREAM,null)
         mediaConnection.on(MediaConnection.MediaEventEnum.STREAM, null)
         mediaConnection.on(MediaConnection.MediaEventEnum.CLOSE, null)
         mediaConnection.on(MediaConnection.MediaEventEnum.ERROR, null)
