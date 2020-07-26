@@ -16,11 +16,12 @@ interface ChatroomActivityListener {
 
     fun toReject()
 
+    fun toReply()
+
     fun toDestroy()
 
     fun setupPeer()
 
-    fun transition()
 
 
 }

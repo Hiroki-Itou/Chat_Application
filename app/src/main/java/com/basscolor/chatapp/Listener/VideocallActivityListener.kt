@@ -7,6 +7,8 @@ interface VideocallActivityListener{
 
     val activity : Activity
 
+    val action : String
+
     fun toHangUp()
 
 }

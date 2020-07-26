@@ -13,7 +13,6 @@ class CallData{
         @SuppressLint("StaticFieldLeak")
         var peer: Peer? = null
         var peerUserID:String? = null
-        var mediaConnection: MediaConnection? = null
     }
 
 }

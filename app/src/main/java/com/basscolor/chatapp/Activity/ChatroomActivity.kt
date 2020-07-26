@@ -33,7 +33,7 @@ class ChatroomActivity:Activity() {
         val rejectButton = findViewById<ImageButton>(R.id.rejectButton)
 
         replyButton.setOnClickListener {
-            chatRoomActivityListener.transition()
+            chatRoomActivityListener.toReply()
         }
 
         rejectButton.setOnClickListener {

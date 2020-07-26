@@ -9,6 +9,7 @@ import io.skyway.Peer.Browser.Canvas
 import io.skyway.Peer.Browser.MediaConstraints
 import io.skyway.Peer.Browser.MediaStream
 import io.skyway.Peer.Browser.Navigator
+import io.skyway.Peer.DataConnection
 import io.skyway.Peer.MediaConnection
 import io.skyway.Peer.Peer
 import org.json.JSONArray
@@ -28,23 +29,36 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
         currentPeerID = FirebaseAuth.getInstance().currentUser!!.uid
         setupPeerCallBack()
         startLocalStream()
-        if(CallData.mediaConnection == null){
-            call()
-        }else{
-            mediaConnection = CallData.mediaConnection
-            setupMediaCallBack()
-            mediaConnection?.answer(localStream)//相手に映像を送信
-        }
     }
 
 
-    private fun call(){
+    fun call(){
         getPeerIDs({list->
             for(id in list){
                 if(id == CallData.peerUserID){
-                    mediaConnection = peer?.call(id, localStream)//相手に映像を送信
-                    setupMediaCallBack()
-                    Log.d(TAG,"接続を開始します")
+
+                    val connection = peer?.connect(id)
+                    connection?.on(DataConnection.DataEventEnum.OPEN){
+
+                        connection.on(DataConnection.DataEventEnum.DATA){
+
+                            if(it == "REPLY"){
+
+                                conect(id)
+                            }else {
+                                val msg = "接続が切断されました"
+                                AlertDialog.Builder(activity).setTitle("接続失敗")
+                                    .setMessage(msg)
+                                    .setPositiveButton("OK") { _ , _ ->
+                                        destroy()
+                                        activity.finish()
+                                        connection.close()
+                                        connection.on(DataConnection.DataEventEnum.OPEN,null)
+                                        connection.on(DataConnection.DataEventEnum.DATA,null)
+                                    }.setCancelable(false).show()
+                            }
+                        }
+                    }
 
                     return@getPeerIDs
                 }
@@ -61,11 +75,26 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
             Log.e(TAG,"$this でエラーが発生: $e")
         })
     }
+
+    private fun conect(id:String){
+        mediaConnection = peer?.call(id, localStream)//相手に映像を送信
+        setupMediaCallBack(mediaConnection!!)
+        Log.d(TAG,"接続を開始します")
+    }
+
     fun destroy(){
         destroyStream()
     }
 
     private fun setupPeerCallBack(){
+
+        CallData.peer?.on(Peer.PeerEventEnum.CALL) { p0 ->//電話を受信したとき
+            (p0 as? MediaConnection)?.let{it->
+                mediaConnection = it
+                mediaConnection?.answer(localStream)//相手に映像を送信
+                setupMediaCallBack(mediaConnection!!)
+            }
+        }
 
         peer?.on(Peer.PeerEventEnum.CLOSE){p0->
             (p0 as? MediaConnection)?.let{
@@ -74,21 +103,22 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
             }
         }
     }
-    private fun setupMediaCallBack(){//相手の映像を表示
-        mediaConnection?.on(MediaConnection.MediaEventEnum.STREAM) { p0 ->
+    private fun setupMediaCallBack(mediaConnection:MediaConnection){//相手の映像を表示
+        mediaConnection.on(MediaConnection.MediaEventEnum.STREAM) { p0 ->
             (p0 as? MediaStream)?.let{it->
                 remoteStream = it
                 remoteStream!!.addVideoRenderer(remoteStreamView, 0)
+
                 Log.d("debug", "相手の映像を受信しました")
             }
         }
-        mediaConnection?.on(MediaConnection.MediaEventEnum.CLOSE){
+        mediaConnection.on(MediaConnection.MediaEventEnum.CLOSE){
             destroy()
             activity.finish() }
-        mediaConnection?.on(MediaConnection.MediaEventEnum.REMOVE_STREAM){
+        mediaConnection.on(MediaConnection.MediaEventEnum.REMOVE_STREAM){
             destroy()
             activity.finish()}
-        mediaConnection?.on(MediaConnection.MediaEventEnum.ERROR){
+        mediaConnection.on(MediaConnection.MediaEventEnum.ERROR){
             destroy()
             activity.finish()
         }
@@ -102,6 +132,8 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
         Navigator.initialize(peer)
         localStream = Navigator.getUserMedia(constraints)
         localStream?.addVideoRenderer(localStreamView, 0)
+        localStreamView.setZOrderMediaOverlay(true)
+
     }
 
     private fun getPeerIDs(found:(ArrayList<String>)->Unit,failure:(Exception)->Unit){
@@ -135,12 +167,12 @@ class SkywayBridhe(val activity: Activity, val localStreamView:Canvas, val remot
         closeRemoteStream()
         closeLocalStream()
         Navigator.terminate()
-        if(CallData.mediaConnection != null){
-            if (CallData.mediaConnection!!.isOpen){
-                CallData.mediaConnection!!.close()
+        if(mediaConnection != null){
+            if (mediaConnection!!.isOpen){
+                mediaConnection!!.close()
             }
-            unsetMediaCallbacks(CallData.mediaConnection!!)
-            CallData.mediaConnection = null
+            unsetMediaCallbacks(mediaConnection!!)
+            mediaConnection = null
         }
     }
 

@@ -22,12 +22,17 @@ class VideocallActivity :Activity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_videocall)
 
-        videocallActivityController = VideocallActivityController(this)
+        val intent = intent
+        val action = intent.getStringExtra("ACTION")
+        videocallActivityController = VideocallActivityController(this,action)
 
         val hangUpButton = findViewById<ImageButton>(R.id.hangUpButton)
         hangUpButton.setOnClickListener {
             videocallActivityController.toHangUp()
         }
+
+
+
     }
 
     override fun onResume() {
