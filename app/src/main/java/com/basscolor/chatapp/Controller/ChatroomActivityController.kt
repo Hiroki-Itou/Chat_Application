@@ -6,7 +6,6 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.RingtoneManager
-import android.telecom.Call
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -18,12 +17,11 @@ import com.basscolor.chatapp.Deta.Chatroom
 import com.basscolor.chatapp.Model.CustomMessageView
 import com.basscolor.chatapp.Model.FireBase.MessageDatabase
 import com.basscolor.chatapp.Listener.ChatroomActivityListener
-import com.basscolor.chatapp.Model.CallData
+import com.basscolor.chatapp.Deta.CallData
 import com.basscolor.chatapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.QuerySnapshot
 import io.skyway.Peer.DataConnection
-import io.skyway.Peer.MediaConnection
 import io.skyway.Peer.Peer
 import io.skyway.Peer.PeerOption
 
@@ -127,15 +125,24 @@ class ChatroomActivityController(override val activity: Activity, override val c
         CallData.peer?.on(Peer.PeerEventEnum.ERROR
         ) { p0 -> Log.d(TAG, "サーバ接続中にエラーが発生しました: $p0") }
 
-        CallData.peer?.on(Peer.PeerEventEnum.CONNECTION){p0->
+        CallData.peer?.on(Peer.PeerEventEnum.CONNECTION){ p0->
             (p0 as? DataConnection)?.let{it->
                 dataConnection = it
+                setuoDataConnectionCallBack(dataConnection!!)
                 ringtone.play()
                 incomingView.visibility = View.VISIBLE
             }
         }
     }
+    private fun setuoDataConnectionCallBack(dataConnection: DataConnection){
 
+        dataConnection.on(DataConnection.DataEventEnum.CLOSE){
+            dataConnection.on(DataConnection.DataEventEnum.CLOSE, null)
+            this.dataConnection = null
+            ringtone.stop()
+            incomingView.visibility = View.INVISIBLE
+        }
+    }
 
     private fun transition(action:String){
         ringtone.stop()
@@ -143,9 +150,8 @@ class ChatroomActivityController(override val activity: Activity, override val c
         val intent = Intent(activity, VideocallActivity::class.java)
         intent.putExtra("ACTION",action)
         activity.startActivity(intent)
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
-
-
 
     override fun toDestroy(){
 
@@ -162,7 +168,7 @@ class ChatroomActivityController(override val activity: Activity, override val c
         }
     }
 
-    fun unsetPeerCallback(peer: Peer) {
+    private fun unsetPeerCallback(peer: Peer) {
 
         peer.on(Peer.PeerEventEnum.OPEN, null)
         peer.on(Peer.PeerEventEnum.CONNECTION, null)

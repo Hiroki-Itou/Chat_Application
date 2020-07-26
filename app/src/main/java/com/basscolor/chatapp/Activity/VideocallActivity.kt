@@ -1,17 +1,13 @@
 package com.basscolor.chatapp.Activity
 
 import android.app.Activity
-import android.content.pm.PackageManager
 import android.media.AudioManager
-import io.skyway.Peer.Browser.Canvas
 import android.os.Bundle
 import android.util.Log
 import com.basscolor.chatapp.R
 import android.widget.ImageButton
 import com.basscolor.chatapp.Controller.VideocallActivityController
-import com.basscolor.chatapp.Deta.Chatroom
 import com.basscolor.chatapp.Listener.VideocallActivityListener
-import com.basscolor.chatapp.Model.CallData
 
 class VideocallActivity :Activity(){
 
@@ -30,9 +26,6 @@ class VideocallActivity :Activity(){
         hangUpButton.setOnClickListener {
             videocallActivityController.toHangUp()
         }
-
-
-
     }
 
     override fun onResume() {

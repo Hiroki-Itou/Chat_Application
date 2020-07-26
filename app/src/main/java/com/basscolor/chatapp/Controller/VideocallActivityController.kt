@@ -1,12 +1,7 @@
 package com.basscolor.chatapp.Controller
 
 import android.app.Activity
-import android.opengl.Visibility
-import android.view.View
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.basscolor.chatapp.Deta.Chatroom
 import com.basscolor.chatapp.Listener.VideocallActivityListener
-import com.basscolor.chatapp.Model.CallData
 import com.basscolor.chatapp.Model.SkywayBridhe
 import com.basscolor.chatapp.R
 import io.skyway.Peer.Browser.Canvas
@@ -26,8 +21,8 @@ class VideocallActivityController(override val activity: Activity, override val 
     }
 
     override fun toHangUp() {
-        skywayBridhe.destroy()
-        activity.finish()
+
+        skywayBridhe.hangUp()
     }
 
 }

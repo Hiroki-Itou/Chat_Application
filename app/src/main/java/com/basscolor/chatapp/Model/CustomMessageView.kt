@@ -18,7 +18,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class CustomMessageView (view: MessageView,val activity:Activity,val chatroom: Chatroom) {
+class CustomMessageView (view: MessageView, val activity:Activity, private val chatroom: Chatroom) {
 
     var messageView : MessageView = view
     private lateinit var me: ChatUser
@@ -29,7 +29,6 @@ class CustomMessageView (view: MessageView,val activity:Activity,val chatroom: C
     )
 
     init {
-
         messageView.setRightBubbleColor(ContextCompat.getColor(activity,
             R.color.colorPrimary
         ))
@@ -64,7 +63,6 @@ class CustomMessageView (view: MessageView,val activity:Activity,val chatroom: C
         }
     }
 
-
     @Synchronized
     fun createBalloon(snapshot: DocumentSnapshot){
         val sdf = SimpleDateFormat("MM-dd HH:mm")
@@ -78,7 +76,6 @@ class CustomMessageView (view: MessageView,val activity:Activity,val chatroom: C
             leftBalloonDisplay(snapshot)
         }
     }
-
 
     private fun rightBalloonDisplay(snapshot: DocumentSnapshot){
 
@@ -104,6 +101,5 @@ class CustomMessageView (view: MessageView,val activity:Activity,val chatroom: C
             .setSendTime(calendar)
             .build()
         messageView.setMessage(message)
-
     }
 }
