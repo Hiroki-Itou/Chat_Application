@@ -4,30 +4,37 @@ import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import com.basscolor.chatapp.Activity.ChatroomListActivity
 import com.basscolor.chatapp.Activity.SigninActivity
 import com.basscolor.chatapp.Model.FireBase.Authentication
 import com.basscolor.chatapp.Model.LoadingIndicator
 import com.basscolor.chatapp.Listener.LoginActivityListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.lang.Exception
+import kotlin.coroutines.CoroutineContext
 
 
 class LoginActivityController(override val activity: Activity) :
-    LoginActivityListener {
+    LoginActivityListener, CoroutineScope {
 
     private var _email : String? = null
     private var _password : String? = null
     private val authentication = Authentication()
     private var loadingIndicator: LoadingIndicator =
         LoadingIndicator(activity)
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() =  Dispatchers.Main + job
 
     override fun loginCheck() {
-
         if (authentication.isLogin()){
-            loadingIndicator.start()
-            Log.d(TAG,"ログインしています")
-            toActivity()
+            Log.d(TAG,"既にログインしています")
+            transition()
         }else{
-            loadingIndicator.stop()
             Log.d(TAG,"ログインしていません")
         }
     }
@@ -44,21 +51,27 @@ class LoginActivityController(override val activity: Activity) :
         Log.d(TAG,"Passwordを取得しました= "+this._password!!)
     }
 
-    override  fun  onLogIn() {
+    override fun onLogIn() {
         if (_email == null || _password == null) return
         loadingIndicator.start()
-
         val authentication = Authentication()
-        authentication.login(_email!!,_password!!,{s ->
-            Log.d(TAG, s)
-            loadingIndicator.stop()
-            toActivity()
-        }, {e ->
-            Log.e(TAG,"ログイン中にエラーが発生しました。"+e)
-        })
+
+        launch{
+            try {
+                val loginSuccess = authentication.login(_email!!,_password!!)
+                Log.d(TAG, loginSuccess)
+                transition()
+            }catch (e:Exception){
+                val message = "ログインに失敗しました"
+                Log.e(TAG, "$message:$e")
+                loadingIndicator.stop()
+                Toast.makeText(activity,message, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
-    private fun toActivity(){
+    private fun transition(){
+        loadingIndicator.stop()
         val intent = Intent(activity, ChatroomListActivity::class.java)
         activity.startActivity(intent)
     }

@@ -77,34 +77,25 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
     }
 
     private fun signinAction(){
-
         val authentication = Authentication()
-        authentication.signin(_email!!,_password!!,
-            {signin ->
-                Log.d(TAG,signin)
-                val userDatabase = UserDatabase()
-                userDatabase.registration(preparationRegistration(),
-                    {registration->
-                        Log.d(TAG,registration)
-                        val firebaseAuth = FirebaseAuth.getInstance()
-                        authentication.setProfile(_userName!!,getUri(),
-                            {setProfile->
-                                Log.d(TAG,setProfile)
-                                firebaseAuth.signOut()
-                                loadingIndicator.stop()
-                                activity.finish()//Login画面へ
-                            },{e->
-                                Log.d(TAG,"プロフィール登録中にエラーが発生しました$e")
-                                loadingIndicator.stop()
-                            })
-                    },{e->
-                        Log.d(TAG,"ユーザー登録中にエラーが発生しました$e")
-                        loadingIndicator.stop()
-                    })
-            },{e->
-                Log.d(TAG,"サインイン中にエラーが発生しました$e")
+        launch {
+            try {
+                val signinSuccess = authentication.signin(_email!!,_password!!)
+                Log.d(TAG,signinSuccess)
+                val registrationSuccess = userDatabase.registration(preparationRegistration())
+                Log.d(TAG,registrationSuccess)
+                val profileSuccess = authentication.setProfile(_userName!!,getUri())
+                Log.d(TAG,profileSuccess)
+                FirebaseAuth.getInstance().signOut()
                 loadingIndicator.stop()
-            })
+                activity.finish()//Login画面へ
+            }catch (e:Exception){
+                val message = "サインイン中にエラーが発生しました"
+                Log.e(TAG, "$message:$e")
+                loadingIndicator.stop()
+                Toast.makeText(activity,message,Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun preparationRegistration(): UserData {

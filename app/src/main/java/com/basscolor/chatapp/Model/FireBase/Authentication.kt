@@ -3,6 +3,9 @@ package com.basscolor.chatapp.Model.FireBase
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 
 class Authentication {
@@ -11,40 +14,42 @@ class Authentication {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     @Synchronized
-    fun signin(email:String,password:String,success:(String)->Unit ,failure:(Exception)->Unit ){
-
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                success("サインイン完了")
-            }.addOnFailureListener { e ->
-                failure(e)
-            }
+    suspend fun signin(email:String,password:String):String{
+        return suspendCoroutine {cont->
+            firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    cont.resume("サインイン完了")
+                }.addOnFailureListener { e ->
+                    cont.resumeWithException(e)
+                }
+        }
     }
 
     @Synchronized
-    fun login(email:String,password:String,success:(String)->Unit ,failure:(Exception)->Unit ){
-
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                success("ログイン完了")
-            }.addOnFailureListener { e ->
-                failure(e)
-            }
-
+    suspend fun login(email:String,password:String):String{
+        return suspendCoroutine {cont->
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    cont.resume("ログイン完了")
+                }.addOnFailureListener { e ->
+                    cont.resumeWithException(e)
+                }
+        }
     }
 
     @Synchronized
-    fun setProfile(userName:String,uri: Uri,success:(String)->Unit ,failure:(Exception)->Unit ){
-
+    suspend fun  setProfile(userName:String,uri: Uri):String{
         val currentUser = firebaseAuth.currentUser
         val request = UserProfileChangeRequest.Builder()
             .setDisplayName(userName)
             .setPhotoUri(uri)
             .build()
-        currentUser!!.updateProfile(request).addOnSuccessListener {
-            success("プロフィールの登録が完了しました")
-        }.addOnFailureListener { e->
-            failure(e)
+        return suspendCoroutine {cont->
+            currentUser!!.updateProfile(request).addOnSuccessListener {
+                cont.resume("プロフィールの登録が完了しました")
+            }.addOnFailureListener { e->
+                cont.resumeWithException(e)
+            }
         }
     }
 
