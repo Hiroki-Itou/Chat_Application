@@ -5,6 +5,7 @@ import android.content.ContentResolver
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import com.basscolor.chatapp.*
 import com.basscolor.chatapp.Deta.UserData
 import com.basscolor.chatapp.Model.FireBase.Authentication
@@ -12,9 +13,12 @@ import com.basscolor.chatapp.Model.FireBase.UserDatabase
 import com.basscolor.chatapp.Listener.SigninActivityListener
 import com.basscolor.chatapp.Model.LoadingIndicator
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.*
+import java.lang.Exception
+import kotlin.coroutines.CoroutineContext
 
 
-class SigninActivityController(override val activity: Activity):SigninActivityListener {
+class SigninActivityController(override val activity: Activity):SigninActivityListener,CoroutineScope {
 
     private var _userName : String? = null
     private var _email : String? = null
@@ -22,6 +26,11 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
     private var _confirmationPass : String? = null
     private var loadingIndicator: LoadingIndicator =
         LoadingIndicator(activity)
+    private val userDatabase = UserDatabase()
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     private fun getUri(): Uri {
 
@@ -63,8 +72,11 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
 
     override fun onSignIn() {
         if (_email == null || _password == null || _userName == null ) return
-        if(!password_Check())return
         loadingIndicator.start()
+        inputDataCheck()
+    }
+
+    private fun signinAction(){
 
         val authentication = Authentication()
         authentication.signin(_email!!,_password!!,
@@ -106,7 +118,30 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
         return UserData(registData)
     }
 
-    private fun password_Check():Boolean{
-        return _password == _confirmationPass
+    private fun inputDataCheck(){
+
+        launch{
+            try {
+                if(!userDatabase.isEnabledName(_userName!!)){
+                    loadingIndicator.stop()
+                    Toast.makeText(activity,"入力したユーザー名は既に使用されています",Toast.LENGTH_LONG).show()
+                    return@launch
+                }
+                if(!userDatabase.isEnabledEmail(_email!!)){
+                    loadingIndicator.stop()
+                    Toast.makeText(activity,"入力したメールアドレスは既に使用されています",Toast.LENGTH_LONG).show()
+                    return@launch
+                }
+                if(_password != _confirmationPass){
+                    loadingIndicator.stop()
+                    Toast.makeText(activity,"入力したパスワードが一致していません",Toast.LENGTH_LONG).show()
+                    return@launch
+                }
+                Log.d(TAG,"コルーチンがすべて通過しました")
+                signinAction()
+            }catch (e:Exception){
+                Log.e(TAG,"重複チェック中にエラーが発生しました:$e")
+            }
+        }
     }
 }

@@ -48,7 +48,6 @@ class Authentication {
         }
     }
 
-
     fun isLogin():Boolean {
         return firebaseAuth.currentUser != null
     }

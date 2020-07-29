@@ -1,8 +1,10 @@
 package com.basscolor.chatapp.Activity
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.SearchView
 import com.basscolor.chatapp.R
@@ -30,15 +32,15 @@ class UserSearchActivity : Activity() {
 
                 return if(query != null){
                     friendSearchController.search(query)
+
+                    val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    manager.hideSoftInputFromWindow(this@UserSearchActivity.currentFocus?.windowToken,0)
                     true
                 }else{
                     false
                 }
             }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return true
-            }
+            override fun onQueryTextChange(newText: String?): Boolean { return true }
         })
     }
 

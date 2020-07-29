@@ -67,6 +67,7 @@ class SigninActivity : Activity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         Log.d("Destroy",this.localClassName+"は破壊されました")
     }
 }
