@@ -169,7 +169,6 @@ class ChatroomActivityController(override val activity: Activity, override val c
     }
 
     private fun unsetPeerCallback(peer: Peer) {
-
         peer.on(Peer.PeerEventEnum.OPEN, null)
         peer.on(Peer.PeerEventEnum.CONNECTION, null)
         peer.on(Peer.PeerEventEnum.CALL, null)
@@ -177,6 +176,4 @@ class ChatroomActivityController(override val activity: Activity, override val c
         peer.on(Peer.PeerEventEnum.DISCONNECTED, null)
         peer.on(Peer.PeerEventEnum.ERROR, null)
     }
-
-
 }

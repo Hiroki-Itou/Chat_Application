@@ -18,7 +18,7 @@ import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
 
-class SigninActivityController(override val activity: Activity):SigninActivityListener,CoroutineScope {
+class SigninActivityController(override val activity: Activity):SigninActivityListener {
 
     private var _userName : String? = null
     private var _email : String? = null
@@ -27,10 +27,6 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
     private var loadingIndicator: LoadingIndicator =
         LoadingIndicator(activity)
     private val userDatabase = UserDatabase()
-
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
 
     private fun getUri(): Uri {
 
@@ -76,25 +72,28 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
         inputDataCheck()
     }
 
-    private fun signinAction(){
+    private fun signinAction() = CoroutineScope(Dispatchers.IO).launch{
         val authentication = Authentication()
-        launch {
-            try {
-                val signinSuccess = authentication.signin(_email!!,_password!!)
-                Log.d(TAG,signinSuccess)
-                val registrationSuccess = userDatabase.registration(preparationRegistration())
-                Log.d(TAG,registrationSuccess)
-                val profileSuccess = authentication.setProfile(_userName!!,getUri())
-                Log.d(TAG,profileSuccess)
-                FirebaseAuth.getInstance().signOut()
-                loadingIndicator.stop()
-                activity.finish()//Login画面へ
-            }catch (e:Exception){
-                val message = "サインイン中にエラーが発生しました"
-                Log.e(TAG, "$message:$e")
-                loadingIndicator.stop()
-                Toast.makeText(activity,message,Toast.LENGTH_LONG).show()
-            }
+        try {
+            val signinSuccess = authentication.signin(_email!!,_password!!)
+            Log.d(TAG,signinSuccess)
+            val registrationSuccess = userDatabase.registration(preparationRegistration())
+            Log.d(TAG,registrationSuccess)
+            val profileSuccess = authentication.setProfile(_userName!!,getUri())
+            Log.d(TAG,profileSuccess)
+            FirebaseAuth.getInstance().signOut()
+            withContext(Dispatchers.Main) { activity.finish()}//Login画面へ
+        }catch (e:Exception){
+            val message = "サインイン中にエラーが発生しました"
+            Log.e(TAG, "$message:$e")
+            displayToast(message)
+        }
+    }
+
+    private fun displayToast(message:String){
+        CoroutineScope(Dispatchers.Main).launch {
+            loadingIndicator.stop()
+            Toast.makeText(activity,message,Toast.LENGTH_LONG).show()
         }
     }
 
@@ -109,30 +108,25 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
         return UserData(registData)
     }
 
-    private fun inputDataCheck(){
-
-        launch{
-            try {
-                if(!userDatabase.isEnabledName(_userName!!)){
-                    loadingIndicator.stop()
-                    Toast.makeText(activity,"入力したユーザー名は既に使用されています",Toast.LENGTH_LONG).show()
-                    return@launch
-                }
-                if(!userDatabase.isEnabledEmail(_email!!)){
-                    loadingIndicator.stop()
-                    Toast.makeText(activity,"入力したメールアドレスは既に使用されています",Toast.LENGTH_LONG).show()
-                    return@launch
-                }
-                if(_password != _confirmationPass){
-                    loadingIndicator.stop()
-                    Toast.makeText(activity,"入力したパスワードが一致していません",Toast.LENGTH_LONG).show()
-                    return@launch
-                }
-                Log.d(TAG,"コルーチンがすべて通過しました")
-                signinAction()
-            }catch (e:Exception){
-                Log.e(TAG,"重複チェック中にエラーが発生しました:$e")
+    private fun inputDataCheck() = CoroutineScope(Dispatchers.IO).launch{
+        try {
+            if(!userDatabase.isEnabledName(_userName!!)){
+                displayToast("入力したユーザー名は既に使用されています")
+                return@launch
             }
+            if(!userDatabase.isEnabledEmail(_email!!)){
+                displayToast("入力したメールアドレスは既に使用されています")
+                return@launch
+            }
+            if(_password != _confirmationPass){
+                displayToast("入力したパスワードが一致していません")
+                return@launch
+            }
+            Log.d(TAG,"コルーチンがすべて通過しました")
+            signinAction()
+        }catch (e:Exception){
+            Log.e(TAG,"重複チェック中にエラーが発生しました:$e")
+            displayToast("不明なエラーが発生しました")
         }
     }
 }

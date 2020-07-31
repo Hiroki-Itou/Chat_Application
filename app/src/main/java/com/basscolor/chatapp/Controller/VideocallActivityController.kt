@@ -21,7 +21,6 @@ class VideocallActivityController(override val activity: Activity, override val 
     }
 
     override fun toHangUp() {
-
         skywayBridhe.hangUp()
     }
 

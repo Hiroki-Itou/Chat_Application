@@ -7,28 +7,22 @@ import android.util.Log
 import android.widget.Toast
 import com.basscolor.chatapp.Activity.ChatroomListActivity
 import com.basscolor.chatapp.Activity.SigninActivity
+import com.basscolor.chatapp.Listener.LoginActivityListener
 import com.basscolor.chatapp.Model.FireBase.Authentication
 import com.basscolor.chatapp.Model.LoadingIndicator
-import com.basscolor.chatapp.Listener.LoginActivityListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.lang.Exception
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.withContext
 
 
-class LoginActivityController(override val activity: Activity) :
-    LoginActivityListener, CoroutineScope {
+class LoginActivityController(override val activity: Activity) : LoginActivityListener {
 
     private var _email : String? = null
     private var _password : String? = null
     private val authentication = Authentication()
     private var loadingIndicator: LoadingIndicator =
         LoadingIndicator(activity)
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() =  Dispatchers.Main + job
 
     override fun loginCheck() {
         if (authentication.isLogin()){
@@ -55,17 +49,16 @@ class LoginActivityController(override val activity: Activity) :
         if (_email == null || _password == null) return
         loadingIndicator.start()
         val authentication = Authentication()
-
-        launch{
+        CoroutineScope(Dispatchers.Main).launch{
             try {
-                val loginSuccess = authentication.login(_email!!,_password!!)
-                Log.d(TAG, loginSuccess)
+                val success = withContext(Dispatchers.IO) { authentication.login(_email!!, _password!!) }
+                Log.d(TAG, success)
                 transition()
             }catch (e:Exception){
                 val message = "ログインに失敗しました"
                 Log.e(TAG, "$message:$e")
                 loadingIndicator.stop()
-                Toast.makeText(activity,message, Toast.LENGTH_LONG).show()
+                Toast.makeText(activity,message,Toast.LENGTH_LONG).show()
             }
         }
     }
