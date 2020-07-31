@@ -18,11 +18,10 @@ import kotlinx.coroutines.withContext
 
 class LoginActivityController(override val activity: Activity) : LoginActivityListener {
 
-    private var _email : String? = null
-    private var _password : String? = null
+    private var email : String? = null
+    private var password : String? = null
     private val authentication = Authentication()
-    private var loadingIndicator: LoadingIndicator =
-        LoadingIndicator(activity)
+    private var loadingIndicator: LoadingIndicator = LoadingIndicator(activity)
 
     override fun loginCheck() {
         if (authentication.isLogin()){
@@ -34,24 +33,27 @@ class LoginActivityController(override val activity: Activity) : LoginActivityLi
     }
 
     override fun onInputMailAddress(email: String) {
-        this._email = email
-        if (this._email == null)return
-        Log.d(TAG,"E-mailを取得しました= "+this._email!!)
+        this.email = email
+        Log.d(TAG, "E-mailを取得しました= $email")
     }
 
     override fun onInputPassword(password: String) {
-        this._password = password
-        if (this._password == null)return
-        Log.d(TAG,"Passwordを取得しました= "+this._password!!)
+        this.password = password
+        Log.d(TAG, "Passwordを取得しました= $password")
     }
 
     override fun onLogIn() {
-        if (_email == null || _password == null) return
+        if (email == null || password == null){
+            val message = "必要項目に記入漏れがあります"
+            Log.d(TAG, "message")
+            Toast.makeText(activity,message,Toast.LENGTH_LONG).show()
+            return
+        }
         loadingIndicator.start()
         val authentication = Authentication()
         CoroutineScope(Dispatchers.Main).launch{
             try {
-                val success = withContext(Dispatchers.IO) { authentication.login(_email!!, _password!!) }
+                val success = withContext(Dispatchers.IO) { authentication.login(email!!, password!!) }
                 Log.d(TAG, success)
                 transition()
             }catch (e:Exception){

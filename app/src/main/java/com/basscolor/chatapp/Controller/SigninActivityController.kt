@@ -20,10 +20,10 @@ import kotlin.coroutines.CoroutineContext
 
 class SigninActivityController(override val activity: Activity):SigninActivityListener {
 
-    private var _userName : String? = null
-    private var _email : String? = null
-    private var _password : String? = null
-    private var _confirmationPass : String? = null
+    private var userName : String? = null
+    private var email : String? = null
+    private var password : String? = null
+    private var confirmationPass : String? = null
     private var loadingIndicator: LoadingIndicator =
         LoadingIndicator(activity)
     private val userDatabase = UserDatabase()
@@ -43,31 +43,33 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
     }
 
     override fun onInputUserName(name: String) {
-        this._userName = name
-        if (this._userName == null)return
-        Log.d(TAG,"_userNameを取得しました= "+this._userName!!)
+        this.userName = name
+        if (this.userName == null)return
+        Log.d(TAG,"_userNameを取得しました= "+this.userName!!)
     }
 
     override fun onInputMailAddress(email: String) {
-        this._email = email
-        if (this._email == null)return
-        Log.d(TAG,"E-mailを取得しました= "+this._email!!)
+        this.email = email
+        Log.d(TAG,"E-mailを取得しました= "+this.email!!)
     }
 
     override fun onInputPassword(password: String) {
-        this._password = password
-        if (this._password == null)return
-        Log.d(TAG,"Passwordを取得しました= "+this._password!!)
+        this.password = password
+        Log.d(TAG,"Passwordを取得しました= "+this.password!!)
     }
 
     override fun onInputConfirmationPass(confirmationPass: String) {
-        this._confirmationPass = confirmationPass
-        if (this._confirmationPass == null)return
-        Log.d(TAG,"_confirmationPassを取得しました= "+this._confirmationPass!!)
+        this.confirmationPass = confirmationPass
+        Log.d(TAG,"_confirmationPassを取得しました= "+this.confirmationPass!!)
     }
 
     override fun onSignIn() {
-        if (_email == null || _password == null || _userName == null ) return
+        if (email == null || password == null || userName == null ){
+            val message = "必要項目に記入漏れがあります"
+            Log.d(TAG, "message")
+            Toast.makeText(activity,message,Toast.LENGTH_LONG).show()
+            return
+        }
         loadingIndicator.start()
         inputDataCheck()
     }
@@ -75,11 +77,11 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
     private fun signinAction() = CoroutineScope(Dispatchers.IO).launch{
         val authentication = Authentication()
         try {
-            val signinSuccess = authentication.signin(_email!!,_password!!)
+            val signinSuccess = authentication.signin(email!!,password!!)
             Log.d(TAG,signinSuccess)
             val registrationSuccess = userDatabase.registration(preparationRegistration())
             Log.d(TAG,registrationSuccess)
-            val profileSuccess = authentication.setProfile(_userName!!,getUri())
+            val profileSuccess = authentication.setProfile(userName!!,getUri())
             Log.d(TAG,profileSuccess)
             FirebaseAuth.getInstance().signOut()
             withContext(Dispatchers.Main) { activity.finish()}//Login画面へ
@@ -101,8 +103,8 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
         val uid =  FirebaseAuth.getInstance().currentUser!!.uid
 
         val registData = mapOf<String,Any>(
-            "name" to _userName as String,
-            "email" to _email as String,
+            "name" to userName as String,
+            "email" to email as String,
             "userID" to uid
         )
         return UserData(registData)
@@ -110,15 +112,15 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
 
     private fun inputDataCheck() = CoroutineScope(Dispatchers.IO).launch{
         try {
-            if(!userDatabase.isEnabledName(_userName!!)){
+            if(!userDatabase.isEnabledName(userName!!)){
                 displayToast("入力したユーザー名は既に使用されています")
                 return@launch
             }
-            if(!userDatabase.isEnabledEmail(_email!!)){
+            if(!userDatabase.isEnabledEmail(email!!)){
                 displayToast("入力したメールアドレスは既に使用されています")
                 return@launch
             }
-            if(_password != _confirmationPass){
+            if(password != confirmationPass){
                 displayToast("入力したパスワードが一致していません")
                 return@launch
             }

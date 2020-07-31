@@ -26,20 +26,38 @@ class ChatroomDatabase {
     @Synchronized
     suspend fun loadChatroomList() = suspendCoroutine<ArrayList<Chatroom>?>{cont ->
 
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        firestore.collection("chatrooms").whereArrayContains("userIDs",currentUser!!.uid).get().addOnSuccessListener {result ->
+        chatroomListSearcher({cont.resume(it)},{cont.resume(null)},{cont.resumeWithException(it)})
+    }
+
+    @Synchronized
+    suspend fun isAlreadyCreatedRoom(name:String) = suspendCoroutine<Boolean> {cont->
+
+        chatroomListSearcher({list->
+            for (c in list){
+                if(c.getPeerUserName() == name){
+                    cont.resume(true)
+                    return@chatroomListSearcher
+                }
+            }
+            cont.resume(false)
+        },{ cont.resume(false) },{ cont.resumeWithException(it) })
+    }
+
+    private fun chatroomListSearcher(found:(ArrayList<Chatroom>)->Unit, notFound:()->Unit, failure:(Exception)->Unit){
+
+        firestore.collection("chatrooms").whereArrayContains("userIDs",FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener {result ->
             val chatrooms = ArrayList<Chatroom>()
             if(result.isEmpty){
-                cont.resume(null)
+                notFound()
                 return@addOnSuccessListener
             }
             for (doc in result) {
                 val chatroom = Chatroom(doc.data)
                 chatrooms.add(chatroom)
             }
-            cont.resume(chatrooms)
+            found(chatrooms)
         }.addOnFailureListener {e ->
-            cont.resumeWithException(e)
+            failure(e)
         }
     }
 

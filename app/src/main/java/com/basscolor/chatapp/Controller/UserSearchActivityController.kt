@@ -22,9 +22,15 @@ class UserSearchActivityController(override val activity: Activity) : UserSearch
 
     override fun search(userName:String) {
         val userDatabase = UserDatabase()
+        val chatroomDatabase = ChatroomDatabase()
         CoroutineScope(Dispatchers.Main).launch{
             try {
                 val log : String
+                if(withContext(Dispatchers.IO){chatroomDatabase.isAlreadyCreatedRoom(userName)}){
+                    log = "既に作成済みです"
+                    Toast.makeText(activity,log,Toast.LENGTH_LONG).show()
+                    return@launch
+                }
                 val userData = withContext(Dispatchers.IO){userDatabase.nameSearch(userName)}
                 if(userData != null){
                     searchUser = userData

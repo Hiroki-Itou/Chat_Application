@@ -50,4 +50,8 @@ class ChatroomListActivity : Activity() {
         super.onDestroy()
         Log.d("Destroy",this.localClassName+"は破壊されました")
     }
+
+    override fun onBackPressed() {
+        
+    }
 }
