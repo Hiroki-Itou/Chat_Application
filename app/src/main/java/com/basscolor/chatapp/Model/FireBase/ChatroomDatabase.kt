@@ -5,40 +5,41 @@ import com.basscolor.chatapp.Deta.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.Serializable
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class ChatroomDatabase {
 
     private val firestore = FirebaseFirestore.getInstance()
 
-    fun registration(chatroom: HashMap<String, Serializable>,success:(String)->Unit,failure:(Exception)->Unit){
-
+    @Synchronized
+    suspend fun registration(chatroom: HashMap<String, Serializable>) = suspendCoroutine<String> { cont->
         val roomID = chatroom["roomID"] as String
         firestore.collection("chatrooms").document(roomID).set(chatroom).addOnSuccessListener {
-           success("チャットルーム情報を登録しました")
+            cont.resume("チャットルーム情報を登録しました")
         }.addOnFailureListener { e ->
-           failure(e)
+            cont.resumeWithException(e)
         }
     }
 
-    fun loadChatroomList(found:(ArrayList<Chatroom>)->Unit, empty:(String)->Unit, failure:(Exception)->Unit ){
+    @Synchronized
+    suspend fun loadChatroomList() = suspendCoroutine<ArrayList<Chatroom>?>{cont ->
 
         val currentUser = FirebaseAuth.getInstance().currentUser
         firestore.collection("chatrooms").whereArrayContains("userIDs",currentUser!!.uid).get().addOnSuccessListener {result ->
             val chatrooms = ArrayList<Chatroom>()
-
             if(result.isEmpty){
-                empty("チャットルームが見つかりませんでした")
+                cont.resume(null)
                 return@addOnSuccessListener
             }
-
             for (doc in result) {
                 val chatroom = Chatroom(doc.data)
                 chatrooms.add(chatroom)
             }
-            found(chatrooms)
-
+            cont.resume(chatrooms)
         }.addOnFailureListener {e ->
-            failure(e)
+            cont.resumeWithException(e)
         }
     }
 

@@ -49,10 +49,14 @@ class UserSearchActivityController(override val activity: Activity) : UserSearch
         val chatroomDatabase = ChatroomDatabase()
         val roomData = chatroomDatabase.makeRoomData(searchUser)
 
-        chatroomDatabase.registration(roomData,
-            {s->
-                Log.d(TAG,s)
-                activity.finish()
-            },{e-> Log.d(TAG,"ルーム作成に失敗しました ",e) })
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val log = chatroomDatabase.registration(roomData)
+                Log.d(TAG, log)
+                withContext(Dispatchers.Main) { activity.finish() }
+            } catch (e: Exception) {
+                Log.e(TAG, "ルーム作成に失敗しました ", e)
+            }
+        }
     }
 }

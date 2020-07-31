@@ -15,7 +15,12 @@ import com.basscolor.chatapp.Listener.ChatroomListActivityListener
 import com.google.firebase.auth.FirebaseAuth
 import io.skyway.Peer.Peer
 import io.skyway.Peer.PeerOption
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.Serializable
+import java.lang.Exception
 import kotlin.collections.ArrayList
 
 class ChatroomListActivityController(override val activity: Activity, override var listView: ListView) : ChatroomListActivityListener {
@@ -24,7 +29,20 @@ class ChatroomListActivityController(override val activity: Activity, override v
 
     override fun loadChatList() {
         val chatroomDatabase = ChatroomDatabase()
-        chatroomDatabase.loadChatroomList({list-> displayChatroomList(list) },{s-> Log.d(TAG, s) },{e-> Log.e(TAG, "チャットリストの取得に失敗しました", e) })
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val list = chatroomDatabase.loadChatroomList()
+                if(list != null){
+                    withContext(Dispatchers.Main){displayChatroomList(list)}
+                }else{
+                    Log.d(TAG, "チャットルームが見つかりませんでした")
+                }
+
+            }catch (e:Exception){
+                Log.e(TAG, "チャットリストの取得に失敗しました", e)
+            }
+        }
     }
 
     private fun displayChatroomList(chatRooms: ArrayList<Chatroom>){

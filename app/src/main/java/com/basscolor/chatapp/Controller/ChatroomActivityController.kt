@@ -24,6 +24,10 @@ import com.google.firebase.firestore.QuerySnapshot
 import io.skyway.Peer.DataConnection
 import io.skyway.Peer.Peer
 import io.skyway.Peer.PeerOption
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class ChatroomActivityController(override val activity: Activity, override val chatroom: Chatroom) : ChatroomActivityListener {
 
@@ -37,7 +41,22 @@ class ChatroomActivityController(override val activity: Activity, override val c
     private var count = 0
 
     init {
+
+//        CoroutineScope(Dispatchers.IO).launch {
+//            try {
+//                val snapshot = messageDatabase.receiveMessage(chatroom)
+//                if(snapshot != null){
+//                    receive(snapshot)
+//                }else{
+//                    Log.d(TAG,"取得したメッセージは空です")
+//                }
+//            }catch (e:Exception){
+//                Log.e(TAG,"メッセージの取得に失敗しました$e")
+//            }
+//        }
+
         messageDatabase.receiveMessage(chatroom) { snapshot -> receive(snapshot)}
+
         incomingView = activity.findViewById(R.id.IncomingView)
         val nameView = activity.findViewById<TextView>(R.id.nameView)
         nameView.text = chatroom.getPeerUserName()
@@ -54,7 +73,15 @@ class ChatroomActivityController(override val activity: Activity, override val c
 
     override fun toSpeak(message: String) {
         if(message == "")return
-        messageDatabase.sendMessage(chatroom,message, {s-> Log.d(TAG, s) },{e-> Log.e(TAG, "メッセージの送信に失敗しました", e) })
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val log = messageDatabase.sendMessage(chatroom,message)
+                Log.d(TAG,log)
+            }catch (e:Exception){
+                Log.e(TAG, "メッセージの送信に失敗しました", e)
+            }
+        }
     }
 
     override fun toCall() {
