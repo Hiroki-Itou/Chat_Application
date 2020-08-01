@@ -1,9 +1,12 @@
 package com.basscolor.chatapp.Activity
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.widget.EditText
 import android.widget.ImageButton
@@ -19,7 +22,6 @@ class ChatroomActivity:Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chatroom)
-
         val intent = intent
         val chatroom = intent.getSerializableExtra("chatroom") as Chatroom
 
@@ -51,6 +53,12 @@ class ChatroomActivity:Activity() {
             chatRoomActivityListener.toSpeak(editText.text.toString())
             editText.text.clear()
         }
+        chatRoomActivityListener.checkPermission()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        chatRoomActivityListener.checkPermission()
     }
 
     override fun onDestroy() {
@@ -59,14 +67,30 @@ class ChatroomActivity:Activity() {
         Log.d("Destroy",this.localClassName+"は破壊されました")
     }
 
+    private fun toAppSettingsView(){
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package",packageName,null)
+        )
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             0 -> {
-                if (grantResults.count() > 0 && grantResults[0] === PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.count() > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED&&grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("Permission","全てのパーミッションが許可されました")
                     chatRoomActivityListener.setupPeer()
                 } else {
-                    Log.d("Permission","パーミッションエラーが発生しました")
+                    Log.d("Permission","パーミッションが許可されませんでした")
+
+                    AlertDialog.Builder(this).setTitle("Error")
+                        .setMessage("アプリを使用するにはアクセス権を許可してください")
+                        .setPositiveButton("OK") { _ , _ ->
+                            toAppSettingsView()
+                        }.setCancelable(false).show()
                 }
             }
         }

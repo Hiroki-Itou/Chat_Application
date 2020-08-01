@@ -22,6 +22,8 @@ interface ChatroomActivityListener {
 
     fun setupPeer()
 
+    fun checkPermission()
+
 
 
 }

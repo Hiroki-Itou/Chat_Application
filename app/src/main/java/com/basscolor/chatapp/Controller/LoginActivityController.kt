@@ -43,9 +43,10 @@ class LoginActivityController(override val activity: Activity) : LoginActivityLi
     }
 
     override fun onLogIn() {
+        loadingIndicator.stop()
         if (email == null || password == null){
             val message = "必要項目に記入漏れがあります"
-            Log.d(TAG, "message")
+            Log.d(TAG, message)
             Toast.makeText(activity,message,Toast.LENGTH_LONG).show()
             return
         }

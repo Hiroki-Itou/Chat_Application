@@ -15,7 +15,6 @@ import com.basscolor.chatapp.Model.LoadingIndicator
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
 import java.lang.Exception
-import kotlin.coroutines.CoroutineContext
 
 
 class SigninActivityController(override val activity: Activity):SigninActivityListener {
@@ -24,8 +23,7 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
     private var email : String? = null
     private var password : String? = null
     private var confirmationPass : String? = null
-    private var loadingIndicator: LoadingIndicator =
-        LoadingIndicator(activity)
+    private var loadingIndicator: LoadingIndicator = LoadingIndicator(activity)
     private val userDatabase = UserDatabase()
 
     private fun getUri(): Uri {
@@ -64,9 +62,10 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
     }
 
     override fun onSignIn() {
+        loadingIndicator.stop()
         if (email == null || password == null || userName == null ){
             val message = "必要項目に記入漏れがあります"
-            Log.d(TAG, "message")
+            Log.d(TAG, message)
             Toast.makeText(activity,message,Toast.LENGTH_LONG).show()
             return
         }

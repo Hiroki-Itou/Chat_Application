@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.basscolor.chatapp.R
 import com.basscolor.chatapp.Controller.SigninActivityController
 import com.basscolor.chatapp.Listener.SigninActivityListener
@@ -26,8 +25,6 @@ class SigninActivity : Activity() {
         val emailText = findViewById<EditText>(R.id.mail_edittext)
         val passwordText = findViewById<EditText>(R.id.password_edittext)
         val confirmationPassText = findViewById<EditText>(R.id.confirmation_pass_edittext)
-        val progressView = findViewById<ConstraintLayout>(R.id.progressView)
-        progressView.visibility = android.widget.ProgressBar.INVISIBLE
 
         signinController = SigninActivityController(this)
 

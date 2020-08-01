@@ -52,6 +52,6 @@ class ChatroomListActivity : Activity() {
     }
 
     override fun onBackPressed() {
-        
+
     }
 }

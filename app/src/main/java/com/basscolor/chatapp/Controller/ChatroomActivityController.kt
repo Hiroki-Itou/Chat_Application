@@ -6,12 +6,13 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.RingtoneManager
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
 import com.basscolor.chatapp.Activity.VideocallActivity
 import com.basscolor.chatapp.Deta.Chatroom
 import com.basscolor.chatapp.Model.CustomMessageView
@@ -42,19 +43,6 @@ class ChatroomActivityController(override val activity: Activity, override val c
 
     init {
 
-//        CoroutineScope(Dispatchers.IO).launch {
-//            try {
-//                val snapshot = messageDatabase.receiveMessage(chatroom)
-//                if(snapshot != null){
-//                    receive(snapshot)
-//                }else{
-//                    Log.d(TAG,"取得したメッセージは空です")
-//                }
-//            }catch (e:Exception){
-//                Log.e(TAG,"メッセージの取得に失敗しました$e")
-//            }
-//        }
-
         messageDatabase.receiveMessage(chatroom) { snapshot -> receive(snapshot)}
 
         incomingView = activity.findViewById(R.id.IncomingView)
@@ -66,7 +54,6 @@ class ChatroomActivityController(override val activity: Activity, override val c
             activity,
             chatroom
         )
-        checkPermission()
     }
 
     override fun onInputMessage(message: String) {}
@@ -123,12 +110,16 @@ class ChatroomActivityController(override val activity: Activity, override val c
         chatView.messageView.scrollToEnd()
     }
 
-    private fun checkPermission(){
-        if (ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.CAMERA) !== PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.RECORD_AUDIO) !== PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO), 0)
-        } else {
+    override fun checkPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (checkSelfPermission(activity,
+                    Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(activity,
+                    Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO), 0)
+            } else {
+                setupPeer()
+            }
+        }else{
             setupPeer()
         }
     }

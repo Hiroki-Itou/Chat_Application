@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.basscolor.chatapp.Controller.LoginActivityController
 import com.basscolor.chatapp.Listener.LoginActivityListener
 import com.basscolor.chatapp.R
@@ -25,8 +24,6 @@ class LoginActivity : Activity() {
         val loginButton = findViewById<Button>(R.id.login_button)
         val emailText = findViewById<EditText>(R.id.mail_edit_text)
         val passwordText = findViewById<EditText>(R.id.password_edit_text)
-        val progressView = findViewById<ConstraintLayout>(R.id.progressView)
-        progressView.visibility = android.widget.ProgressBar.INVISIBLE
 
         _login_Controller = LoginActivityController(this)
 
