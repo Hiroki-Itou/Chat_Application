@@ -8,6 +8,7 @@ import com.basscolor.chatapp.R
 import android.widget.ImageButton
 import com.basscolor.chatapp.Controller.VideocallActivityController
 import com.basscolor.chatapp.Listener.VideocallActivityListener
+import com.basscolor.chatapp.Model.setOnDelayClickListener
 
 class VideocallActivity :Activity(){
 
@@ -23,7 +24,7 @@ class VideocallActivity :Activity(){
         videocallActivityController = VideocallActivityController(this,action)
 
         val hangUpButton = findViewById<ImageButton>(R.id.hangUpButton)
-        hangUpButton.setOnClickListener {
+        hangUpButton.setOnDelayClickListener {
             videocallActivityController.toHangUp()
         }
     }

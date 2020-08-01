@@ -10,6 +10,7 @@ import android.widget.EditText
 import com.basscolor.chatapp.R
 import com.basscolor.chatapp.Controller.SigninActivityController
 import com.basscolor.chatapp.Listener.SigninActivityListener
+import com.basscolor.chatapp.Model.setOnDelayClickListener
 
 class SigninActivity : Activity() {
 
@@ -28,7 +29,7 @@ class SigninActivity : Activity() {
 
         signinController = SigninActivityController(this)
 
-        signinButton.setOnClickListener {
+        signinButton.setOnDelayClickListener {
             signinController.onSignIn()
         }
         nameText.addTextChangedListener(object : TextWatcher {

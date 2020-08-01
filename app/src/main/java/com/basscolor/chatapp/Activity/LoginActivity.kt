@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import com.basscolor.chatapp.Controller.LoginActivityController
 import com.basscolor.chatapp.Listener.LoginActivityListener
+import com.basscolor.chatapp.Model.setOnDelayClickListener
 import com.basscolor.chatapp.R
 
 class LoginActivity : Activity() {
@@ -43,12 +44,12 @@ class LoginActivity : Activity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
 
-        loginButton.setOnClickListener {
+        loginButton.setOnDelayClickListener {
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             _login_Controller.onLogIn()
         }
 
-        accountCreationButton.setOnClickListener {
+        accountCreationButton.setOnDelayClickListener {
             _login_Controller.toUserRregistration()
         }
     }
@@ -62,5 +63,4 @@ class LoginActivity : Activity() {
         super.onDestroy()
         Log.d("Destroy",this.localClassName+"は破壊されました")
     }
-
 }

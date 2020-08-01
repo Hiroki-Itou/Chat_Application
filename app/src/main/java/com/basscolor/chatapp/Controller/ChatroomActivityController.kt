@@ -46,8 +46,10 @@ class ChatroomActivityController(override val activity: Activity, override val c
         messageDatabase.receiveMessage(chatroom) { snapshot -> receive(snapshot)}
 
         incomingView = activity.findViewById(R.id.IncomingView)
-        val nameView = activity.findViewById<TextView>(R.id.nameView)
-        nameView.text = chatroom.getPeerUserName()
+        val incomingName = activity.findViewById<TextView>(R.id.IncomingName)
+        incomingName.text = chatroom.getPeerUserName()
+        val nameArea = activity.findViewById<TextView>(R.id.nameArea)
+        nameArea.text = chatroom.getPeerUserName()
 
         chatView = CustomMessageView(
             activity.findViewById(R.id.message_view),

@@ -13,6 +13,7 @@ import android.widget.ImageButton
 import com.basscolor.chatapp.Deta.Chatroom
 import com.basscolor.chatapp.Controller.ChatroomActivityController
 import com.basscolor.chatapp.Listener.ChatroomActivityListener
+import com.basscolor.chatapp.Model.setOnDelayClickListener
 import com.basscolor.chatapp.R
 
 class ChatroomActivity:Activity() {
@@ -34,21 +35,21 @@ class ChatroomActivity:Activity() {
         val replyButton = findViewById<ImageButton>(R.id.replyButton)
         val rejectButton = findViewById<ImageButton>(R.id.rejectButton)
 
-        replyButton.setOnClickListener {
+        replyButton.setOnDelayClickListener {
             chatRoomActivityListener.toReply()
         }
 
-        rejectButton.setOnClickListener {
+        rejectButton.setOnDelayClickListener {
             chatRoomActivityListener.toReject()
         }
 
-        callButton.setOnClickListener {
+        callButton.setOnDelayClickListener {
           chatRoomActivityListener.toCall()
         }
 
-        sendButton.setOnClickListener {
+        sendButton.setOnDelayClickListener {
 
-            if(editText.text == null)return@setOnClickListener
+            if(editText.text == null)return@setOnDelayClickListener
 
             chatRoomActivityListener.toSpeak(editText.text.toString())
             editText.text.clear()

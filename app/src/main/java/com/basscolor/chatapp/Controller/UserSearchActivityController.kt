@@ -19,7 +19,7 @@ import java.lang.Exception
 class UserSearchActivityController(override val activity: Activity) : UserSearchActivityListener{
 
     private lateinit var searchUser : UserData
-
+    private  val chatroomDatabase = ChatroomDatabase()
     override fun search(userName:String) {
         val userDatabase = UserDatabase()
         val chatroomDatabase = ChatroomDatabase()
@@ -52,9 +52,8 @@ class UserSearchActivityController(override val activity: Activity) : UserSearch
     }
 
     override fun addRoom() {
-        val chatroomDatabase = ChatroomDatabase()
-        val roomData = chatroomDatabase.makeRoomData(searchUser)
 
+        val roomData = chatroomDatabase.makeRoomData(searchUser)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val log = chatroomDatabase.registration(roomData)
