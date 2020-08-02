@@ -26,14 +26,14 @@ class ChatroomListActivity : Activity() {
             ChatroomListActivityController(this, chatList)
 
         val createRoomButton = findViewById<Button>(R.id.create_room)
-        createRoomButton.setOnDelayClickListener {
+        createRoomButton.setOnDelayClickListener ({
             chatListController.addChatlist()
-        }
+        })
 
         val logOutButton = findViewById<Button>(R.id.logout_Button)
-        logOutButton.setOnDelayClickListener {
+        logOutButton.setOnDelayClickListener ({
             chatListController.logOut()
-        }
+        })
 
 
         chatListController.loadChatList()

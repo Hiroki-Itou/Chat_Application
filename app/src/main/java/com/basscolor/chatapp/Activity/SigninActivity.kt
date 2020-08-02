@@ -29,9 +29,9 @@ class SigninActivity : Activity() {
 
         signinController = SigninActivityController(this)
 
-        signinButton.setOnDelayClickListener {
+        signinButton.setOnDelayClickListener( {
             signinController.onSignIn()
-        }
+        })
         nameText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p: Editable?) {
                 signinController.onInputUserName(p.toString())

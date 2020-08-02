@@ -127,6 +127,9 @@ class ChatroomActivityController(override val activity: Activity, override val c
     }
 
     override fun setupPeer(){//パーミッションの許可が得られた後に行う初期設定
+        if(CallData.peer != null){
+            return
+        }
         val option = PeerOption()
         option.key = CallData.API_KEY
         option.domain = CallData.DOMAIN
@@ -137,6 +140,7 @@ class ChatroomActivityController(override val activity: Activity, override val c
 
     private fun setupPeerEvent(){
 
+        Log.d(TAG, "Peerのセットアップ開始")
         CallData.peer?.on(Peer.PeerEventEnum.OPEN) { p0 ->
             (p0 as? String)?.let{ it ->
                 Log.d(TAG, "サーバに接続しました: $it")
@@ -148,13 +152,13 @@ class ChatroomActivityController(override val activity: Activity, override val c
         CallData.peer?.on(Peer.PeerEventEnum.CONNECTION){ p0->
             (p0 as? DataConnection)?.let{it->
                 dataConnection = it
-                setuoDataConnectionCallBack(dataConnection!!)
+                setupDataConnectionCallBack(dataConnection!!)
                 ringtone.play()
                 incomingView.visibility = View.VISIBLE
             }
         }
     }
-    private fun setuoDataConnectionCallBack(dataConnection: DataConnection){
+    private fun setupDataConnectionCallBack(dataConnection: DataConnection){
 
         dataConnection.on(DataConnection.DataEventEnum.CLOSE){
             dataConnection.on(DataConnection.DataEventEnum.CLOSE, null)

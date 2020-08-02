@@ -24,9 +24,9 @@ class VideocallActivity :Activity(){
         videocallActivityController = VideocallActivityController(this,action)
 
         val hangUpButton = findViewById<ImageButton>(R.id.hangUpButton)
-        hangUpButton.setOnDelayClickListener {
+        hangUpButton.setOnDelayClickListener( {
             videocallActivityController.toHangUp()
-        }
+        })
     }
 
     override fun onResume() {

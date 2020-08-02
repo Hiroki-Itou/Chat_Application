@@ -9,7 +9,7 @@ import android.widget.ImageButton
 import android.widget.ListView
 
 
-fun Button.setOnDelayClickListener(action:()->Unit, delayMillis:Long){
+fun Button.setOnDelayClickListener(action:()->Unit, delayMillis:Long = 3000L){
     this.setOnClickListener {
         this.isEnabled = false
         Handler().postDelayed({
@@ -18,7 +18,7 @@ fun Button.setOnDelayClickListener(action:()->Unit, delayMillis:Long){
         action()
     }
 }
-fun ImageButton.setOnDelayClickListener(action:()->Unit, delayMillis:Long){
+fun ImageButton.setOnDelayClickListener(action:()->Unit, delayMillis:Long = 3000L){
     this.setOnClickListener {
         this.isEnabled = false
         Handler().postDelayed({
@@ -26,14 +26,6 @@ fun ImageButton.setOnDelayClickListener(action:()->Unit, delayMillis:Long){
         },delayMillis)
         action()
     }
-}
-
-fun Button.setOnDelayClickListener(action:()->Unit){
-    this.setOnDelayClickListener ({ action() },3000L)
-}
-
-fun ImageButton.setOnDelayClickListener(action:()->Unit){
-    this.setOnDelayClickListener ({ action() },3000L)
 }
 
 fun ListView.setOnDelayItemClickListener(action:(AdapterView<*>, View, Int, Long )->Unit){

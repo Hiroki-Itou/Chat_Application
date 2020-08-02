@@ -35,30 +35,30 @@ class ChatroomActivity:Activity() {
         val replyButton = findViewById<ImageButton>(R.id.replyButton)
         val rejectButton = findViewById<ImageButton>(R.id.rejectButton)
 
-        replyButton.setOnDelayClickListener {
+        replyButton.setOnDelayClickListener ({
             chatRoomActivityListener.toReply()
-        }
+        })
 
-        rejectButton.setOnDelayClickListener {
+        rejectButton.setOnDelayClickListener ({
             chatRoomActivityListener.toReject()
-        }
+        })
 
-        callButton.setOnDelayClickListener {
+        callButton.setOnDelayClickListener ({
           chatRoomActivityListener.toCall()
-        }
+        })
 
-        sendButton.setOnDelayClickListener {
+        sendButton.setOnDelayClickListener( {
 
             if(editText.text == null)return@setOnDelayClickListener
 
             chatRoomActivityListener.toSpeak(editText.text.toString())
             editText.text.clear()
-        }
-        chatRoomActivityListener.checkPermission()
+        })
+
     }
 
-    override fun onRestart() {
-        super.onRestart()
+    override fun onStart() {
+        super.onStart()
         chatRoomActivityListener.checkPermission()
     }
 

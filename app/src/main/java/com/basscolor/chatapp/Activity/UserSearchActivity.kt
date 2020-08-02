@@ -3,11 +3,9 @@ package com.basscolor.chatapp.Activity
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.SearchView
 import com.basscolor.chatapp.R
 import com.basscolor.chatapp.Controller.UserSearchActivityController
@@ -25,14 +23,14 @@ class UserSearchActivity : Activity() {
         friendSearchController = UserSearchActivityController(this)
 
         val addFriendButton = findViewById<Button>(R.id.Add_Friend)
-        addFriendButton.setOnDelayClickListener{
+        addFriendButton.setOnDelayClickListener({
             friendSearchController.addRoom()
-        }
+        })
 
         val backButton = findViewById<Button>(R.id.backButton)
-        backButton.setOnDelayClickListener {
+        backButton.setOnDelayClickListener( {
             finish()
-        }
+        })
 
         val searchView = findViewById<SearchView>(R.id.searchView)
         searchView.setOnQueryTextListener(object:SearchView.OnQueryTextListener{

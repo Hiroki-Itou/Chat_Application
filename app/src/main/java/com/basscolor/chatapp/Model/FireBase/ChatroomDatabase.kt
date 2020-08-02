@@ -3,6 +3,7 @@ package com.basscolor.chatapp.Model.FireBase
 import com.basscolor.chatapp.Deta.Chatroom
 import com.basscolor.chatapp.Deta.UserData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.Serializable
 import kotlin.coroutines.resume
@@ -62,19 +63,15 @@ class ChatroomDatabase {
     }
 
     fun makeRoomData(userData: UserData):HashMap<String,Serializable>{
-        val currentUser = FirebaseAuth.getInstance().currentUser
-
-        val names = arrayListOf(userData.getName(),currentUser!!.displayName!!)
-        val userIDs = arrayListOf(currentUser.uid,userData.getUserID())
-
-        val data = hashMapOf(
-            "userNames" to names,
-            "userIDs" to userIDs,
-            "roomID" to randomString(),
-            "doorMessagePlate" to ""
-        )
-        return data
+        return userData.mekeRoomData(FirebaseAuth.getInstance().currentUser!!)
     }
+
+    private fun UserData.mekeRoomData(currentUser: FirebaseUser) = hashMapOf(
+        "userNames" to arrayListOf(this.getName(),currentUser.displayName!!),
+        "userIDs" to arrayListOf(currentUser.uid,this.getUserID()),
+        "roomID" to randomString(),
+        "doorMessagePlate" to ""
+    )
 
     private fun randomString():String{
 

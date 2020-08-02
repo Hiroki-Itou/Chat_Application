@@ -13,7 +13,14 @@ import io.skyway.Peer.Browser.Navigator
 import io.skyway.Peer.DataConnection
 import io.skyway.Peer.MediaConnection
 import io.skyway.Peer.Peer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 
 class SkywayBridhe(val activity: Activity, private val localStreamView:Canvas, private val remoteStreamView:Canvas){
@@ -34,20 +41,33 @@ class SkywayBridhe(val activity: Activity, private val localStreamView:Canvas, p
     }
 
     fun call(){
-        getPeerID(peer!!,{ id->
-            peerID = id
-            dataConnection = peer?.connect(peerID)
-            setuoDataConnectionCallBack(dataConnection!!)
-            Log.d(TAG,"接続確認を開始します")
-        },{
-            val msg = "接続先が見つかりませんでした"
-            Log.d(TAG,msg)
-            AlertDialog.Builder(activity).setTitle("Error")
-                .setMessage(msg)
-                .setPositiveButton("OK") { _ , _ ->
-                    toPreviousView()
-                }.setCancelable(false).show()
-        })
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                peerID = withContext(Dispatchers.IO){ getPeerID(peer!!) }
+                if(peerID != null){
+                    dataConnection = peer!!.connect(peerID)
+                    dataConnection!!.setupDataConnectionCallBack()
+                    Log.d(TAG,"接続先へ接続中です")
+                }else{
+                    val msg = "接続先が見つかりませんでした"
+                    Log.d(TAG,msg)
+                    AlertDialog.Builder(activity).setTitle("Error")
+                        .setMessage(msg)
+                        .setPositiveButton("OK") { _ , _ ->
+                            toPreviousView()
+                        }.setCancelable(false).show()
+                }
+
+            }catch (e:Exception){
+                val msg = "相手の接続を確認中にエラーが発生しました"
+                Log.e(TAG, "$msg:$e")
+                AlertDialog.Builder(activity).setTitle("Error")
+                    .setMessage(msg)
+                    .setPositiveButton("OK") { _ , _ ->
+                        toPreviousView()
+                    }.setCancelable(false).show()
+            }
+        }
     }
 
     fun hangUp(){
@@ -68,6 +88,8 @@ class SkywayBridhe(val activity: Activity, private val localStreamView:Canvas, p
     
     private fun setupPeerCallBack(){
 
+        Log.d(TAG, "Peerのセットアップを開始します")
+
         peer?.on(Peer.PeerEventEnum.CALL) { p0 ->//電話を受信したとき
             (p0 as? MediaConnection)?.let{it->
                 mediaConnection = it
@@ -75,7 +97,6 @@ class SkywayBridhe(val activity: Activity, private val localStreamView:Canvas, p
                 setupMediaConnectionCallBack(mediaConnection!!)
             }
         }
-
         peer?.on(Peer.PeerEventEnum.CLOSE){p0->
             (p0 as? MediaConnection)?.let{
                 toPreviousView()
@@ -83,9 +104,9 @@ class SkywayBridhe(val activity: Activity, private val localStreamView:Canvas, p
         }
     }
 
-    private fun setuoDataConnectionCallBack(dataConnection: DataConnection){
+    private fun DataConnection.setupDataConnectionCallBack(){
         
-        dataConnection.on(DataConnection.DataEventEnum.DATA){
+        this.on(DataConnection.DataEventEnum.DATA){
 
             if(it == "REPLY"){
                 connect(peerID!!)
@@ -129,25 +150,25 @@ class SkywayBridhe(val activity: Activity, private val localStreamView:Canvas, p
         localStreamView.setZOrderMediaOverlay(true)
     }
 
-    private fun getPeerID(peer: Peer,found:(String)->Unit,failure:()->Unit){
-
-        peer.listAllPeers {p->
-            if (p !is JSONArray) {
-                return@listAllPeers
-            }
-            Log.d(TAG, p.length().toString()+"peersの数")
+    @Synchronized
+    private suspend fun getPeerID(peer: Peer) = suspendCoroutine<String?>{ cont->
+        peer.listAllPeers{p->
+            if (p !is JSONArray) return@listAllPeers
+            val no = p.length()
+            Log.d(TAG, "現在$no 人がサーバーに接続しています")
             for (i in 0 until p.length()){
                 try {
                     val peerId = p.getString(i)
                     if (CallData.peerUserID == peerId) {
-                        found(peerId)
+                        cont.resume(peerId)
                         return@listAllPeers
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,"getPeerID内でエラーが発生")
+                    cont.resumeWithException(e)
+                    return@listAllPeers
                 }
             }
-            failure()
+            cont.resume(null)
         }
     }
 //--------------------------destroy-------------------------//
@@ -156,50 +177,56 @@ class SkywayBridhe(val activity: Activity, private val localStreamView:Canvas, p
         closeRemoteStream()
         closeLocalStream()
         Navigator.terminate()
+        unsetPeerCallback(peer)
         if(dataConnection != null){
             if(dataConnection!!.isOpen){
                 dataConnection!!.close()
             }
-            unsetDataCallbacks(dataConnection!!)
+            dataConnection!!.unsetDataCallbacks()
             dataConnection = null
         }
         if(mediaConnection != null){
             if (mediaConnection!!.isOpen){
                 mediaConnection!!.close()
             }
-            unsetMediaCallbacks(mediaConnection!!)
+            mediaConnection!!.unsetMediaCallbacks()
             mediaConnection = null
         }
     }
 
     private fun closeLocalStream(){
-        if(localStream == null)return
+        localStream?:return
         localStream!!.removeVideoRenderer(remoteStreamView,0)
         localStream!!.close()
         Log.d(TAG,"localStreamの解放が完了しました")
     }
 
     private fun closeRemoteStream(){
-        if(remoteStream == null)return
+        remoteStream?:return
         remoteStream!!.removeVideoRenderer(remoteStreamView,0)
         remoteStream!!.close()
         Log.d(TAG,"remoteStreamの解放が完了しました")
     }
 
-    private fun unsetMediaCallbacks(mediaConnection: MediaConnection){
-
-        mediaConnection.on(MediaConnection.MediaEventEnum.REMOVE_STREAM,null)
-        mediaConnection.on(MediaConnection.MediaEventEnum.STREAM, null)
-        mediaConnection.on(MediaConnection.MediaEventEnum.CLOSE, null)
-        mediaConnection.on(MediaConnection.MediaEventEnum.ERROR, null)
+    private fun MediaConnection.unsetMediaCallbacks(){
+        this.on(MediaConnection.MediaEventEnum.REMOVE_STREAM,null)
+        this.on(MediaConnection.MediaEventEnum.STREAM, null)
+        this.on(MediaConnection.MediaEventEnum.CLOSE, null)
+        this.on(MediaConnection.MediaEventEnum.ERROR, null)
     }
 
-    private fun unsetDataCallbacks(dataConnection: DataConnection){
+    private fun DataConnection.unsetDataCallbacks(){
+        this.on(DataConnection.DataEventEnum.OPEN, null)
+        this.on(DataConnection.DataEventEnum.DATA,null)
+        this.on(DataConnection.DataEventEnum.CLOSE, null)
+        this.on(DataConnection.DataEventEnum.ERROR, null)
+    }
 
-        dataConnection.on(DataConnection.DataEventEnum.OPEN, null)
-        dataConnection.on(DataConnection.DataEventEnum.DATA,null)
-        dataConnection.on(DataConnection.DataEventEnum.CLOSE, null)
-        dataConnection.on(DataConnection.DataEventEnum.ERROR, null)
+
+    private fun unsetPeerCallback(peer: Peer?) {
+        peer?.on(Peer.PeerEventEnum.CALL, null)
+        peer?.on(Peer.PeerEventEnum.CLOSE, null)
+        Log.d(TAG,"peerの一部のイベントの解放が完了しました")
     }
 
 }
