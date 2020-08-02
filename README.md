@@ -19,6 +19,7 @@ FirebaseのFirebaseAuthenticationを使用してユーザー認証を行って�
 
 ※Ver.1.0.0ではメールアドレスに認証リンクを送信する認証方法は対応していません。
 <img src="https://user-images.githubusercontent.com/59288180/89121906-1954f000-d4fe-11ea-8348-8700ca6abed7.jpg" width="200">
+
 ## ユーザー検索
 登録してあるユーザー名を知っていれば、ユーザー名を入力してチャットルームを作成する事ができます。
 <img src="https://user-images.githubusercontent.com/59288180/89121954-62a53f80-d4fe-11ea-8cc0-72de864056f1.jpg" width="200">
