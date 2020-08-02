@@ -1,7 +1,7 @@
 # ChatApp
 このアプリは自身の開発成果物用に作成した、リアルタイムチャットアプリです
 
-<img src="https://user-images.githubusercontent.com/59288180/89122762-f7ab3700-d504-11ea-8b41-910efc44fe85.jpg" width="900">
+<img src="https://user-images.githubusercontent.com/59288180/89122836-9cc60f80-d505-11ea-95b2-13155fb37ce8.png" width="900">
 
 
 # 主な機能
