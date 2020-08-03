@@ -34,6 +34,5 @@ FirebaseのFirestoreを使用してリアルタイム受信を行っています
 ## ビデオ通話
 Skywayを使用して、動画通話機能を行っています。
 双方がサーバに接続していれば、着信を受け取って通話を開始できます。
-※Ver.1.0.0では通知機能は対応しておりません。
 
 <img src="https://user-images.githubusercontent.com/59288180/89121986-a26c2700-d4fe-11ea-9346-f286fca8f0b4.jpg" width="200">
