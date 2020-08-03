@@ -83,7 +83,11 @@ class SigninActivityController(override val activity: Activity):SigninActivityLi
             val profileSuccess = authentication.setProfile(userName!!,getUri())
             Log.d(TAG,profileSuccess)
             FirebaseAuth.getInstance().signOut()
-            withContext(Dispatchers.Main) { activity.finish()}//Login画面へ
+            withContext(Dispatchers.Main) {
+                Toast.makeText(activity,"アカウントが登録されました",Toast.LENGTH_LONG).show()
+                activity.finish()
+
+            }//Login画面へ
         }catch (e:Exception){
             val message = "サインイン中にエラーが発生しました"
             Log.e(TAG, "$message:$e")
